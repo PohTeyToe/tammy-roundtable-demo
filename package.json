@@ -1,0 +1,17 @@
+{
+  "name": "tammy-roundtable-demo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Apps Script artifact for Tammy's May 21 roundtable new transaction flow demo",
+  "scripts": {
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "status": "clasp status",
+    "deployments": "clasp deployments",
+    "setup": "clasp run setupDemoEnvironment",
+    "seed": "clasp run seedDemoData",
+    "generate:live": "clasp run runGenerateTransactionPackageByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "rerun:live": "clasp run rerunTransactionPackageByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "render:fallback": "node scripts/render-fallback-assets.mjs"
+  }
+}

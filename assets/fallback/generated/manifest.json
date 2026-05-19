@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-05-19T08:36:18.437Z",
+  "note": "Synthetic local presentation renders from the seeded sample transaction. Safe to show if live Google auth is unavailable, but not proof of a live Google-side run.",
+  "files": [
+    {
+      "name": "dashboard",
+      "html": "dashboard.html",
+      "png": "dashboard.png"
+    },
+    {
+      "name": "required-docs",
+      "html": "required-docs.html",
+      "png": "required-docs.png"
+    },
+    {
+      "name": "trade-record",
+      "html": "trade-record.html",
+      "png": "trade-record.png"
+    },
+    {
+      "name": "folder-tree",
+      "html": "folder-tree.html",
+      "png": "folder-tree.png"
+    },
+    {
+      "name": "draft-preview",
+      "html": "draft-preview.html",
+      "png": "draft-preview.png"
+    },
+    {
+      "name": "calendar",
+      "html": "calendar.html",
+      "png": "calendar.png"
+    }
+  ]
+}
