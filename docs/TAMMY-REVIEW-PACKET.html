@@ -278,104 +278,142 @@
 <body>
   <div class="wrap">
     <section class="hero">
-      <span class="eyebrow">Roundtable Walk-Through</span>
-      <h1>From source document to drafted follow-up.</h1>
-      <p>This demo follows one new transaction from the moment a source document is selected through review, folder and reminder setup, and a drafted client email. The point is to show a workflow that a broker or realtor can understand quickly without losing the human gate at the moments that matter.</p>
-      <p class="hero-note">This walk-through uses sample data. Gmail stays in draft-only mode, so no email leaves the account.</p>
+      <span class="eyebrow"><a href="../" style="color:inherit; text-decoration:none;">&larr; Back to the demo</a> &nbsp;/&nbsp; The full packet</span>
+      <h1>The five-step flow, broken down.</h1>
+      <p>This page goes deeper into the same New Transaction Flow shown on the homepage. Same sample deal: Jordan Patel buying 1128 4 Street SW from Maple Retail Holdings Ltd. Same five steps. Just more detail on what runs and what stays a draft.</p>
+      <p class="hero-note">Sample data only. No emails are sent. Live Google account hookup is a separate setup step covered in the deploy notes.</p>
     </section>
 
     <section class="section step-list">
       <article class="step-card">
-        <span class="step-num">01 / Intake</span>
+        <span class="step-num">01 / Intake form</span>
         <div>
-          <h3>The transaction starts from one selected document.</h3>
-          <p class="step-copy">Instead of retyping details into a new record, the operator points the workflow at a source file such as an executed purchase agreement. That source becomes the starting point for the transaction.</p>
+          <h3>A realtor submits the deal from a Google Form.</h3>
+          <p class="step-copy">Buyer, seller, property, sold price, possession date, MLS number, and the executed offer PDF. The form output lands as a row in the CRM workbook. No retyping into a database.</p>
+          <p class="step-copy"><strong>Stack:</strong> Google Forms &rarr; Google Sheets.</p>
         </div>
       </article>
 
       <article class="step-card">
-        <span class="step-num">02 / Extraction</span>
+        <span class="step-num">02 / Drive folder</span>
         <div>
-          <h3>The document is read and normalized before work continues.</h3>
-          <p class="step-copy">The workflow extracts the core transaction details, checks for missing fields, and records the result directly on the row. If the minimum information is not present, the operator sees that before the workflow moves downstream.</p>
+          <h3>Apps Script creates the client folder.</h3>
+          <p class="step-copy">Folder name matches the transaction ID and address. The subfolder taxonomy is the one you already use: Initial Prospect, Full Info Prospects, Financials, Monthly Sales, Franchise &amp; Lease, Payroll, Incorporated Docs, Store Photos, Normalized Financials. No manual setup per deal.</p>
+          <p class="step-copy"><strong>Stack:</strong> Apps Script &rarr; Google Drive.</p>
         </div>
       </article>
 
       <article class="step-card">
-        <span class="step-num">03 / Review</span>
+        <span class="step-num">03 / Calendar reminders</span>
         <div>
-          <h3>A human approves the transaction before the next step.</h3>
-          <p class="step-copy">The stable pause point is review-ready, not auto-send. That means the operator can approve, reject, or reverse approval without losing track of the current attempt, source lineage, or notes.</p>
+          <h3>Two reminders land on the calendar.</h3>
+          <p class="step-copy">One for the condition waiver deadline, one for possession. Each event description carries the transaction ID and the buyer name so the reminder reads correctly in any view. Auto-attached to the calendar Apps Script uses, not your personal one.</p>
+          <p class="step-copy"><strong>Stack:</strong> Apps Script &rarr; Google Calendar.</p>
         </div>
       </article>
 
       <article class="step-card">
-        <span class="step-num">04 / Setup</span>
+        <span class="step-num">04 / Trade record</span>
         <div>
-          <h3>Folder and reminder setup wrap around the deal.</h3>
-          <p class="step-copy">Once review is approved, the workflow can prepare the surrounding structure: where the files belong, what reminder or follow-up surfaces should exist, and how the transaction stays organized after intake.</p>
+          <h3>Claude extracts the deal fields from the offer PDF.</h3>
+          <p class="step-copy">Buyer, seller, sold price, sale date, possession date, MLS number, contract number, listing realtor, selling realtor. The extracted row writes back to the workbook with the source filename so you can trace it. One condition waiver is left flagged as missing on purpose so the demo shows the missing-doc row.</p>
+          <p class="step-copy"><strong>Stack:</strong> Claude &rarr; Google Sheets.</p>
         </div>
       </article>
 
       <article class="step-card">
-        <span class="step-num">05 / Draft</span>
+        <span class="step-num">05 / Draft email</span>
         <div>
-          <h3>The client email is staged as a draft.</h3>
-          <p class="step-copy">The drafted follow-up is grounded in the source document and normalized fields, then left for a human to review before sending. It helps the operator move faster without pretending the last mile should be automatic.</p>
+          <h3>A client follow-up is staged in Gmail.</h3>
+          <p class="step-copy">The draft uses the extracted fields. Subject line includes the address. Body opens with the buyer name and lists the next-step items in plain language. It stays a draft until a human opens Gmail and hits send. The script never auto-sends.</p>
+          <p class="step-copy"><strong>Stack:</strong> Claude &rarr; Gmail (draft only).</p>
         </div>
       </article>
     </section>
 
     <section class="section proof-grid">
       <article class="proof-card">
-        <img src="../assets/fallback/generated/required-docs.png" alt="Document review surface">
+        <img src="../assets/fallback/generated/intake-form.png" alt="Intake form mockup">
         <div class="proof-body">
-          <span class="proof-tag">Document check</span>
-          <h3>What was found is visible.</h3>
-          <p class="proof-copy">The operator can point to the readiness check, the missing-field summary, and the status shift into review.</p>
+          <span class="proof-tag">Intake form</span>
+          <h3>Realtor submits the deal.</h3>
+          <p class="proof-copy">Buyer, seller, property, sold price, possession date, MLS number, and the executed offer PDF.</p>
         </div>
       </article>
 
       <article class="proof-card">
-        <img src="../assets/fallback/generated/trade-record.png" alt="Trade record surface">
+        <img src="../assets/fallback/generated/folder-tree.png" alt="Drive folder tree">
+        <div class="proof-body">
+          <span class="proof-tag">Drive folder</span>
+          <h3>The taxonomy you already use.</h3>
+          <p class="proof-copy">Folder gets created with the transaction ID and the existing subfolder structure. No manual setup per deal.</p>
+        </div>
+      </article>
+
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/calendar.png" alt="Calendar reminders">
+        <div class="proof-body">
+          <span class="proof-tag">Calendar</span>
+          <h3>Condition and possession reminders.</h3>
+          <p class="proof-copy">Two events with the buyer name and transaction ID in the description.</p>
+        </div>
+      </article>
+
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/trade-record.png" alt="Trade record output">
         <div class="proof-body">
           <span class="proof-tag">Trade record</span>
-          <h3>The row is the control surface.</h3>
-          <p class="proof-copy">Attempt state, source lineage, next-step actions, and draft linkage all stay tied to the current transaction.</p>
+          <h3>Extracted from the offer PDF.</h3>
+          <p class="proof-copy">Claude reads the executed offer and writes the row back to the workbook with the source filename.</p>
         </div>
       </article>
 
       <article class="proof-card">
-        <img src="../assets/fallback/generated/draft-preview.png" alt="Draft email surface">
+        <img src="../assets/fallback/generated/draft-preview.png" alt="Gmail draft preview">
         <div class="proof-body">
           <span class="proof-tag">Draft email</span>
-          <h3>The draft is ready for human review.</h3>
-          <p class="proof-copy">The workflow stages a client-facing message without crossing into auto-send or hiding the source context.</p>
+          <h3>Subject, body, and next steps.</h3>
+          <p class="proof-copy">Drafted in Gmail. Sits in the drafts folder until someone opens it and hits send.</p>
+        </div>
+      </article>
+
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/required-docs.png" alt="Required docs check">
+        <div class="proof-body">
+          <span class="proof-tag">Required docs</span>
+          <h3>What is in and what is missing.</h3>
+          <p class="proof-copy">The dashboard shows expected, received, and missing docs at a glance. The condition waiver is left visible to show the missing-doc row.</p>
         </div>
       </article>
     </section>
 
     <section class="section grid-two">
       <article class="panel">
-        <span class="eyebrow">Why This Matters</span>
-        <p>This is meant to reduce the repeated setup work that comes with every new transaction: document reading, checking what is missing, getting the record into a stable state, and preparing a client follow-up without starting from a blank page each time.</p>
-        <p>The strongest part of the story is not abstract AI capability. It is the fact that the workflow stays grounded in one transaction and one source document while still keeping the operator in control.</p>
+        <span class="eyebrow">What is real</span>
+        <ul class="checklist">
+          <li>Apps Script reads the intake row from the Sheet and creates the Drive folder.</li>
+          <li>Claude extracts the trade record from the source PDF.</li>
+          <li>Calendar reminders are added with the buyer name and transaction ID.</li>
+          <li>The Gmail draft is written from the extracted fields.</li>
+          <li>Every action gets logged to a sheet with timestamp and outcome.</li>
+        </ul>
       </article>
 
       <article class="panel">
-        <span class="eyebrow">Where AI Helps</span>
+        <span class="eyebrow">What is faked or held back</span>
         <ul class="checklist">
-          <li>Reads the selected source document for transaction details.</li>
-          <li>Flags missing or incomplete information before work moves forward.</li>
-          <li>Normalizes extracted details into the working record.</li>
-          <li>Grounds the drafted email in the source and extracted fields.</li>
+          <li>Sample client and property data. No real FINTRAC docs.</li>
+          <li>Drafts never auto-send. The script generates and stops.</li>
+          <li>Apps Script runs against a test Google account, not the production inbox.</li>
+          <li>One condition waiver is left missing on purpose so the missing-doc row is visible.</li>
+          <li>Apps Script project ID and Drive folder ID are placeholders on this page.</li>
         </ul>
       </article>
     </section>
 
     <footer class="footer">
-      <span>Roundtable demo / sample data</span>
-      <span class="footer-note">Live Google account connection and end-to-end browser proof are separate setup steps after the roundtable. This page is the showable workflow surface.</span>
+      <span>Maxwell Canyon Creek / Roundtable demo / May 2026</span>
+      <span class="footer-note">This is the deep-dive companion to the homepage. Live Google account hookup is a separate setup step. Nothing on this page auto-sends.</span>
     </footer>
   </div>
 </body>

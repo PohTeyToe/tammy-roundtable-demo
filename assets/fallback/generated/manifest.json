@@ -1,11 +1,16 @@
 {
-  "generatedAt": "2026-05-19T08:36:18.437Z",
+  "generatedAt": "2026-05-20T22:20:29.857Z",
   "note": "Synthetic local presentation renders from the seeded sample transaction. Safe to show if live Google auth is unavailable, but not proof of a live Google-side run.",
   "files": [
     {
       "name": "dashboard",
       "html": "dashboard.html",
       "png": "dashboard.png"
+    },
+    {
+      "name": "intake-form",
+      "html": "intake-form.html",
+      "png": "intake-form.png"
     },
     {
       "name": "required-docs",

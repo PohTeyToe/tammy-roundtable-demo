@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>New Transaction Intake - Google Forms</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: "Google Sans", "Roboto", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: #202124;
+      background: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  
+  <style>
+    body { background: #f0ebf8; }
+    .gf-shell { max-width: 770px; margin: 0 auto; padding: 28px 16px 60px; }
+    .gf-header {
+      background: #673ab7;
+      border-radius: 8px 8px 0 0;
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      color: #fff;
+    }
+    .gf-header .left { display: flex; align-items: center; gap: 12px; font-size: 13px; opacity: 0.95; }
+    .gf-header .form-icon {
+      width: 22px; height: 28px; background: #fff; border-radius: 2px; position: relative;
+    }
+    .gf-header .form-icon::before {
+      content: ""; position: absolute; top: 6px; left: 4px; right: 4px; height: 2px; background: #673ab7;
+      box-shadow: 0 4px 0 #673ab7, 0 8px 0 #673ab7, 0 12px 0 #673ab7;
+    }
+    .gf-header .pill {
+      background: rgba(255,255,255,0.18); padding: 5px 12px; border-radius: 999px; font-size: 12px; letter-spacing: 0.2px;
+    }
+    .gf-title-card {
+      background: #fff;
+      border-left: 10px solid #673ab7;
+      border-radius: 0 0 8px 8px;
+      padding: 26px 28px 22px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(60,64,67,.12);
+    }
+    .gf-title { font-size: 32px; font-weight: 400; color: #202124; margin: 0 0 12px; letter-spacing: -0.2px; }
+    .gf-desc { font-size: 14px; color: #5f6368; margin: 0; line-height: 1.5; }
+    .gf-q {
+      background: #fff; border-radius: 8px; padding: 22px 28px 20px;
+      margin-bottom: 12px; box-shadow: 0 1px 3px rgba(60,64,67,.12);
+    }
+    .gf-label { font-size: 15px; color: #202124; margin-bottom: 14px; font-weight: 400; line-height: 1.4; }
+    .gf-required { color: #d93025; margin-left: 4px; }
+    .gf-input {
+      font-size: 14px; color: #202124;
+      border: 0; border-bottom: 1px solid #dadce0;
+      padding: 4px 0 6px; min-height: 22px;
+    }
+    .gf-input.placeholder { color: #9aa0a6; }
+    .gf-row { display: flex; gap: 28px; }
+    .gf-row .gf-q { flex: 1; }
+    .gf-upload-q { background: #fff; border-radius: 8px; padding: 22px 28px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(60,64,67,.12); }
+    .gf-upload-card {
+      border: 1px solid #dadce0; border-radius: 8px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px; max-width: 460px;
+    }
+    .gf-upload-card .clip {
+      width: 28px; height: 28px; border-radius: 4px; background: #e8f0fe; display: grid; place-items: center;
+    }
+    .gf-upload-card .clip svg { width: 16px; height: 16px; }
+    .gf-upload-text { display: flex; flex-direction: column; line-height: 1.3; }
+    .gf-upload-text .fname { color: #1a73e8; font-size: 14px; }
+    .gf-upload-text .meta { color: #5f6368; font-size: 12px; }
+    .gf-footer {
+      background: #fff; border-radius: 8px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(60,64,67,.12);
+    }
+    .gf-submit {
+      background: #673ab7; color: #fff; border-radius: 4px; padding: 9px 24px;
+      font-size: 14px; font-weight: 500; letter-spacing: 0.25px;
+      box-shadow: 0 1px 2px rgba(60,64,67,.3);
+    }
+    .gf-clear { color: #673ab7; font-size: 14px; font-weight: 500; padding: 9px 12px; }
+    .gf-never { font-size: 11px; color: #5f6368; padding: 12px 4px 0; }
+  </style>
+  <div class="gf-shell">
+    <div class="gf-header">
+      <div class="left">
+        <div class="form-icon"></div>
+        <div>New Transaction Intake</div>
+      </div>
+      <div class="pill">Form preview</div>
+    </div>
+    <div class="gf-title-card">
+      <h1 class="gf-title">New Transaction Intake</h1>
+      <p class="gf-desc">Submit when a deal closes. Output lands in the Realtor Workflow CRM workbook.<br/>* Indicates required question</p>
+    </div>
+
+    <div class="gf-q">
+      <div class="gf-label">Transaction reference<span class="gf-required">*</span></div>
+      <div class="gf-input">RT-COMP-1001</div>
+    </div>
+
+    <div class="gf-row">
+      <div class="gf-q">
+        <div class="gf-label">Buyer name<span class="gf-required">*</span></div>
+        <div class="gf-input">Jordan Patel</div>
+      </div>
+      <div class="gf-q">
+        <div class="gf-label">Seller name<span class="gf-required">*</span></div>
+        <div class="gf-input">Maple Retail Holdings Ltd.</div>
+      </div>
+    </div>
+
+    <div class="gf-q">
+      <div class="gf-label">Property address<span class="gf-required">*</span></div>
+      <div class="gf-input">1128 4 Street SW, Calgary, AB</div>
+    </div>
+
+    <div class="gf-row">
+      <div class="gf-q">
+        <div class="gf-label">Sold price<span class="gf-required">*</span></div>
+        <div class="gf-input">$425,000</div>
+      </div>
+      <div class="gf-q">
+        <div class="gf-label">Possession date<span class="gf-required">*</span></div>
+        <div class="gf-input">2026-06-15</div>
+      </div>
+      <div class="gf-q">
+        <div class="gf-label">MLS number</div>
+        <div class="gf-input">A2145678</div>
+      </div>
+    </div>
+
+    <div class="gf-upload-q">
+      <div class="gf-label">Source document (accepted offer PDF)</div>
+      <div class="gf-upload-card">
+        <div class="clip">
+          <svg viewBox="0 0 24 24" fill="#1a73e8" xmlns="http://www.w3.org/2000/svg"><path d="M16.5 6v11.5a4.5 4.5 0 0 1-9 0V5a3 3 0 1 1 6 0v10.5a1.5 1.5 0 0 1-3 0V6H10v9.5a3 3 0 0 0 6 0V5a4.5 4.5 0 0 0-9 0v12.5a6 6 0 0 0 12 0V6h-2.5z"/></svg>
+        </div>
+        <div class="gf-upload-text">
+          <div class="fname">accepted-offer-RT-COMP-1001.pdf</div>
+          <div class="meta">412 KB</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gf-footer">
+      <div class="gf-submit">Submit</div>
+      <div class="gf-clear">Clear form</div>
+    </div>
+    <div class="gf-never">Never submit passwords through Google Forms.</div>
+  </div>
+  
+</body>
+</html>

@@ -5,6 +5,7 @@ They are not proof that the live Google workbook, form, calendar, or Gmail draft
 
 Files:
 - `dashboard.png` and `dashboard.html`
+- `intake-form.png` and `intake-form.html`
 - `required-docs.png` and `required-docs.html`
 - `trade-record.png` and `trade-record.html`
 - `folder-tree.png` and `folder-tree.html`

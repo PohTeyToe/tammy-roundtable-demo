@@ -3,562 +3,928 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>New Transaction Workflow</title>
-  <link rel="icon" href="data:,">
+  <title>New Transaction Flow / Roundtable Demo</title>
+  <meta name="description" content="A working demo of the New Transaction Flow for the May 21 realtor roundtable. One deal, five automated steps, drafts only.">
+  <meta property="og:title" content="New Transaction Flow / Roundtable Demo">
+  <meta property="og:description" content="One deal, five automated steps, drafts only. Built for the May 21 realtor roundtable.">
+  <meta property="og:image" content="https://tammy-roundtable-demo.vercel.app/assets/fallback/generated/calendar.png">
+  <meta property="og:url" content="https://tammy-roundtable-demo.vercel.app">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f5d53'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='%23fffaf1' font-family='Inter,Arial' font-weight='700' font-size='30'%3E5%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f3ede4;
-      --paper: rgba(255, 250, 243, 0.94);
-      --paper-strong: rgba(255, 252, 247, 0.98);
-      --ink: #181613;
-      --muted: #5e5852;
-      --soft: #867f78;
-      --line: #d8cebf;
-      --rule: #d4c9b8;
+      --bg: #f4ede0;
+      --paper: #fffaf1;
+      --paper-strong: #fffdf7;
+      --ink: #16140f;
+      --ink-soft: #3d3933;
+      --muted: #5f574d;
+      --soft: #8a8175;
+      --line: #d8cdb9;
+      --rule: #ddd2bd;
       --accent: #1f5d53;
-      --accent-deep: #184b44;
-      --accent-soft: #e1efe8;
-      --shadow: 0 20px 46px rgba(39, 31, 23, 0.08);
-      --serif: "EB Garamond", Georgia, "Times New Roman", serif;
-      --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
-      --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+      --accent-deep: #163f39;
+      --accent-soft: #d6e6df;
+      --warm: #b54e2c;
+      --warm-soft: #f2d9cc;
+      --shadow: 0 14px 38px rgba(38, 31, 24, 0.10);
+      --shadow-lg: 0 30px 80px rgba(38, 31, 24, 0.18);
+      --serif: "Fraunces", "EB Garamond", Georgia, "Times New Roman", serif;
+      --sans: "Inter", "Segoe UI", Arial, sans-serif;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "Courier New", monospace;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; }
 
     body {
-      margin: 0;
       color: var(--ink);
-      font-family: var(--serif);
+      font-family: var(--sans);
       background:
-        radial-gradient(circle at top left, rgba(31, 93, 83, 0.14), transparent 26%),
-        linear-gradient(180deg, #f7f1e8 0%, var(--bg) 100%);
+        radial-gradient(circle at 8% -10%, rgba(31, 93, 83, 0.13), transparent 40%),
+        radial-gradient(circle at 95% 10%, rgba(181, 78, 44, 0.07), transparent 35%),
+        linear-gradient(180deg, #f8f2e6 0%, var(--bg) 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
 
     .wrap {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 46px 22px 84px;
-    }
-
-    .stack > * {
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeUp 560ms ease forwards;
-    }
-
-    .stack > *:nth-child(1) { animation-delay: 0.04s; }
-    .stack > *:nth-child(2) { animation-delay: 0.10s; }
-    .stack > *:nth-child(3) { animation-delay: 0.16s; }
-    .stack > *:nth-child(4) { animation-delay: 0.22s; }
-    .stack > *:nth-child(5) { animation-delay: 0.28s; }
-    .stack > *:nth-child(6) { animation-delay: 0.34s; }
-
-    .masthead,
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: baseline;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--soft);
+      padding: 32px 22px 64px;
     }
 
     .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
       padding-bottom: 18px;
       border-bottom: 1px solid var(--rule);
-    }
-
-    .section {
-      padding: 42px 0;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .eyebrow {
-      display: inline-block;
-      margin-bottom: 18px;
       font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.12em;
+      font-size: 11.5px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--soft);
     }
 
-    h1,
-    h2,
-    h3 {
-      margin: 0;
-      font-family: var(--serif);
-      font-weight: 600;
-      line-height: 0.98;
-      letter-spacing: -0.03em;
+    .masthead .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--ink-soft);
     }
 
-    h1 {
-      font-size: clamp(48px, 6.4vw, 82px);
-      max-width: 780px;
-      margin-bottom: 18px;
-    }
-
-    h2 {
-      font-size: clamp(34px, 4vw, 46px);
-      margin-bottom: 14px;
-    }
-
-    h3 {
-      font-size: 26px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1.58;
-    }
-
-    .utility,
-    .rule-list li,
-    .meta-copy,
-    .step-copy,
-    .artifact-copy,
-    .footer-note,
-    .cta-line {
-      font-family: var(--sans);
+    .masthead .pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
     }
 
     .hero {
+      padding: 56px 0 24px;
       display: grid;
-      grid-template-columns: minmax(0, 1.32fr) minmax(300px, 0.68fr);
-      gap: 34px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 40px;
       align-items: end;
-      padding: 56px 0 42px;
     }
 
-    .hero-copy p {
-      max-width: 640px;
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(40px, 5.6vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      margin: 0 0 18px;
+      color: var(--ink);
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+      text-wrap: balance;
     }
 
-    .actions {
-      margin-top: 28px;
+    h1 .accent { color: var(--accent); font-style: italic; font-weight: 500; }
+
+    .hero p.lede {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 540px;
+      margin: 0;
+    }
+
+    .cta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 14px 18px;
-      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
     }
 
-    .button {
+    .btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-height: 50px;
-      padding: 0 24px;
+      gap: 8px;
+      padding: 13px 22px;
       border-radius: 999px;
-      background: var(--accent);
-      color: #f7fffd;
       font-family: var(--sans);
       font-weight: 600;
+      font-size: 15px;
       border: 1px solid transparent;
-      box-shadow: 0 10px 24px rgba(31, 93, 83, 0.14);
-      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
     }
 
-    .button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(31, 93, 83, 0.18);
+    .btn-primary {
+      background: var(--accent);
+      color: #f6fffb;
+      box-shadow: 0 10px 24px rgba(31, 93, 83, 0.22);
+    }
+
+    .btn-primary:hover {
       background: var(--accent-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(31, 93, 83, 0.30);
     }
 
-    .text-link {
-      color: var(--accent);
-      font-family: var(--sans);
-      font-weight: 600;
-      text-decoration: underline;
-      text-decoration-style: dotted;
-      text-underline-offset: 4px;
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--ink-soft);
     }
 
-    .record-card {
-      padding: 26px 24px 24px;
+    .btn-ghost:hover { background: var(--paper-strong); }
+
+    .btn .key { font-family: var(--mono); font-size: 11px; opacity: 0.7; padding: 2px 6px; border: 1px solid currentColor; border-radius: 5px; }
+
+    /* Sticky transaction card */
+    .tcard {
       background: var(--paper);
-      border: 1px solid rgba(216, 206, 191, 0.88);
-      border-radius: 28px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px 22px 20px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--ink-soft);
     }
 
-    .record-kicker {
+    .tcard-head {
       display: flex;
       justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 18px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--soft);
-    }
-
-    .record-title {
-      font-size: 36px;
-      line-height: 1.02;
+      align-items: center;
+      padding-bottom: 12px;
       margin-bottom: 14px;
-    }
-
-    .record-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px 18px;
-      padding-top: 18px;
-      border-top: 1px solid var(--rule);
-    }
-
-    .record-label,
-    .artifact-label,
-    .proof-tag,
-    .step-num {
-      display: block;
-      margin-bottom: 6px;
-      font-family: var(--mono);
-      font-size: 11px;
+      border-bottom: 1px dashed var(--rule);
+      font-size: 10.5px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--soft);
     }
 
-    .record-value {
-      color: var(--ink);
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.45;
+    .tcard-head .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+    }
+    .tcard-head .status::before {
+      content: "";
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
     }
 
-    .story {
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.9); }
+    }
+
+    .tcard-row {
       display: grid;
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-      gap: 34px;
-      align-items: start;
+      grid-template-columns: 110px 1fr;
+      gap: 4px 14px;
+      padding: 7px 0;
+      border-bottom: 1px dotted rgba(218, 207, 188, 0.55);
+      font-size: 13px;
+    }
+    .tcard-row:last-child { border-bottom: none; }
+    .tcard-row .k { color: var(--soft); }
+    .tcard-row .v { color: var(--ink); font-weight: 500; }
+
+    /* Five-step flow */
+    .flow {
+      margin-top: 56px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .rule-list {
+    .flow-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 22px 28px 16px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .flow-head h2 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .flow-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--soft);
+    }
+
+    .flow-controls button {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .flow-controls button:hover { background: var(--accent-soft); border-color: var(--accent); }
+    .flow-controls button.playing { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .flow-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 480px;
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 0;
+      padding: 18px 0;
+      border-right: 1px solid var(--rule);
+      background: linear-gradient(180deg, rgba(255, 250, 241, 0.6) 0%, rgba(244, 237, 224, 0.4) 100%);
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      padding: 16px 22px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 160ms ease, border-color 160ms ease;
+      position: relative;
+    }
+
+    .step-item:hover { background: rgba(255, 250, 241, 0.9); }
+
+    .step-item.active {
+      background: var(--paper-strong);
+      border-left-color: var(--accent);
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .step-item.active .step-num {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .step-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .step-title { font-weight: 600; font-size: 15.5px; color: var(--ink); }
+    .step-sub { font-size: 13px; color: var(--muted); line-height: 1.4; }
+    .step-tool {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--soft);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .step-stage {
+      padding: 24px 28px 28px;
+      background: linear-gradient(180deg, var(--paper-strong) 0%, var(--paper) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stage-frame {
+      position: relative;
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #edf1f5;
+      box-shadow: 0 4px 16px rgba(38, 31, 24, 0.08);
+      cursor: zoom-in;
+      min-height: 280px;
+    }
+
+    .stage-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transition: opacity 250ms ease, transform 350ms ease;
+    }
+
+    .stage-frame .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: #e7eaef;
+      border-bottom: 1px solid #d2d6dc;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: #555;
+    }
+    .stage-frame .dots { display: flex; gap: 5px; margin-right: 10px; }
+    .stage-frame .dot { width: 11px; height: 11px; border-radius: 50%; background: #c8ccd0; }
+    .stage-frame .dot.r { background: #e57272; }
+    .stage-frame .dot.y { background: #e6c267; }
+    .stage-frame .dot.g { background: #6ec27e; }
+    .stage-frame .url { flex: 1; padding: 5px 10px; background: #fff; border-radius: 6px; color: #555; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .stage-frame .img-wrap {
+      height: calc(100% - 38px);
+      background: #edf1f5;
+      overflow: hidden;
+    }
+
+    .stage-frame .zoom-hint {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(22, 20, 15, 0.78);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 200ms ease;
+      pointer-events: none;
+    }
+    .stage-frame:hover .zoom-hint { opacity: 1; }
+
+    .stage-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .stage-caption-text { color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; max-width: 640px; }
+    .stage-caption-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--soft); white-space: nowrap; }
+
+    /* Progress bar */
+    .flow-progress {
+      height: 3px;
+      background: var(--rule);
+      position: relative;
+    }
+    .flow-progress .bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: var(--accent);
+      width: 20%;
+      transition: width 400ms ease;
+    }
+
+    /* Honest panel */
+    .honest {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .honest-card {
+      padding: 26px 24px 22px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .honest-card.real { border-color: rgba(31, 93, 83, 0.4); }
+    .honest-card.fake { border-color: rgba(181, 78, 44, 0.4); }
+
+    .honest-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .honest-card.real .honest-tag { background: var(--accent-soft); color: var(--accent-deep); }
+    .honest-card.fake .honest-tag { background: var(--warm-soft); color: var(--warm); }
+
+    .honest-card h3 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 22px;
+      margin: 0 0 12px;
+      letter-spacing: -0.015em;
+    }
+
+    .honest-card ul {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
-    .rule-list li {
-      padding: 14px 0;
-      border-top: 1px solid var(--rule);
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .rule-list li:first-child {
-      padding-top: 0;
-      border-top: none;
-    }
-
-    .proof-strip {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 26px;
-    }
-
-    .proof-card,
-    .artifact-card {
-      background: var(--paper);
-      border: 1px solid rgba(216, 206, 191, 0.88);
-      border-radius: 26px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .proof-card img,
-    .artifact-card img {
-      aspect-ratio: 1.22 / 1;
-      object-fit: cover;
-      border-bottom: 1px solid var(--line);
-      background: #e7dece;
-    }
-
-    .proof-body,
-    .artifact-body {
-      padding: 18px 18px 20px;
-    }
-
-    .proof-card h3,
-    .artifact-card h3 {
-      margin-bottom: 8px;
-      font-size: 24px;
-    }
-
-    .proof-copy,
-    .artifact-copy {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.55;
-    }
-
-    .step-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-      align-items: start;
-    }
-
-    .step {
+    .honest-card li {
+      padding: 9px 0;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      border-top: 1px dotted var(--rule);
+      padding-left: 22px;
       position: relative;
-      padding-top: 18px;
     }
-
-    .step::before {
+    .honest-card li:first-child { border-top: none; }
+    .honest-card li::before {
       content: "";
       position: absolute;
-      top: 0;
       left: 0;
-      width: 100%;
-      height: 1px;
-      background: var(--rule);
+      top: 14px;
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+    .honest-card.real li::before { background: var(--accent); }
+    .honest-card.fake li::before { background: var(--warm); }
+
+    /* Detail section */
+    .detail {
+      margin-top: 56px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
     }
 
-    .step-title {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 25px;
-      line-height: 1.05;
-      color: var(--ink);
-    }
-
-    .step-copy {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.56;
-    }
-
-    .artifact-card {
-      margin-top: 18px;
-      border-radius: 22px;
-    }
-
-    .artifact-card img {
-      aspect-ratio: 1.9 / 1;
-    }
-
-    .artifact-copy strong {
-      color: var(--ink);
+    .detail h2 {
+      font-family: var(--serif);
       font-weight: 600;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      margin: 0 0 8px;
     }
 
+    .detail .sub {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 0 22px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .detail-tile {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+    }
+
+    .detail-tile .label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 4px;
+    }
+
+    .detail-tile .val { font-size: 14.5px; font-weight: 500; color: var(--ink); }
+
+    /* Footer */
     .footer {
+      margin-top: 56px;
       padding-top: 22px;
+      border-top: 1px solid var(--rule);
+      display: flex;
       flex-wrap: wrap;
+      gap: 12px 22px;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--soft);
     }
 
-    .footer a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-decoration-style: dotted;
-      text-underline-offset: 4px;
-    }
-
-    .footer-note {
+    .footer .note {
       text-transform: none;
       letter-spacing: 0;
-      font-size: 14px;
-      max-width: 520px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 540px;
       line-height: 1.5;
     }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(22, 20, 15, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      z-index: 50;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 96%;
+      max-height: 92%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 26px;
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
     }
 
     @media (max-width: 980px) {
-      .hero,
-      .story,
-      .proof-strip,
-      .step-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero { grid-template-columns: 1fr; gap: 28px; padding: 36px 0 16px; }
+      .flow-body { grid-template-columns: 1fr; }
+      .step-list { border-right: none; border-bottom: 1px solid var(--rule); }
+      .honest { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
     }
 
-    @media (max-width: 640px) {
-      .wrap {
-        padding: 28px 16px 54px;
-      }
+    @media (max-width: 580px) {
+      .wrap { padding: 22px 16px 50px; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .masthead { font-size: 10px; gap: 8px; }
+      h1 { font-size: 26px; line-height: 1.1; letter-spacing: -0.022em; }
+      h1 .accent { font-style: italic; }
+      .hero p.lede { font-size: 16px; }
+      .hero { padding: 28px 0 12px; gap: 22px; }
+      .flow-head { padding: 16px 18px 12px; }
+      .flow-head h2 { font-size: 22px; }
+      .step-stage { padding: 16px 18px 18px; }
+      .step-item { padding: 14px 18px; }
+      .tcard-row { grid-template-columns: 100px 1fr; font-size: 12px; }
+      .honest-card { padding: 20px 18px 16px; }
+      .honest-card h3 { font-size: 19px; }
+      .flow-controls { gap: 6px; }
+      .flow-controls button { padding: 6px 9px; font-size: 11px; }
+      .btn { padding: 11px 18px; font-size: 14px; }
+    }
 
-      .hero {
-        padding: 36px 0 28px;
-      }
-
-      h1 {
-        font-size: 54px;
-      }
-
-      .record-grid {
-        grid-template-columns: 1fr;
-      }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap stack">
+  <div class="wrap">
     <header class="masthead">
-      <span>VFC / New Transaction Workflow</span>
-      <span>Roundtable Demo / May 2026</span>
+      <span>Maxwell Canyon Creek / VFC Interns</span>
+      <span class="pill">Roundtable demo / May 21 2026</span>
     </header>
 
-    <section class="hero section">
-      <div class="hero-copy">
-        <span class="eyebrow">Roundtable Walk-Through</span>
-        <h1>A new transaction begins with a source document.</h1>
-        <p>It ends with a reviewed record, a consistent folder, and a drafted client email, ready for a human to send. This page walks through that story, step by step.</p>
-        <div class="actions">
-          <a class="button" href="packet/">Open full walk-through</a>
-          <a class="text-link" href="assets/fallback/generated/dashboard.html">Open dashboard preview</a>
+    <section class="hero">
+      <div>
+        <h1>When a deal closes, <span class="accent">five things</span> should happen on their own.</h1>
+        <p class="lede">This is the demo for the realtor roundtable. One sample transaction moves from intake form to a drafted Gmail in about thirty seconds. Click any step to see what actually runs. Nothing emails anyone.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" id="playBtn">Watch the flow</button>
+          <a class="btn btn-ghost" href="packet/">Open the full packet</a>
         </div>
       </div>
 
-      <aside class="record-card">
-        <div class="record-kicker">
+      <aside class="tcard">
+        <div class="tcard-head">
           <span>Transaction in view</span>
-          <span>Offer accepted</span>
+          <span class="status">Demo data live</span>
         </div>
-        <h2 class="record-title">84 Maplewood Ct</h2>
-        <p class="meta-copy">Extracted from the executed purchase agreement and staged for operator review before downstream setup.</p>
-        <div class="record-grid">
-          <div>
-            <span class="record-label">Buyer</span>
-            <div class="record-value">J. and M. Chen</div>
-          </div>
-          <div>
-            <span class="record-label">Source</span>
-            <div class="record-value">Executed purchase agreement PDF</div>
-          </div>
-          <div>
-            <span class="record-label">Current status</span>
-            <div class="record-value">Ready for review</div>
-          </div>
-          <div>
-            <span class="record-label">Next operator action</span>
-            <div class="record-value">Approve review, then generate the draft</div>
-          </div>
-        </div>
+        <div class="tcard-row"><span class="k">Transaction ID</span><span class="v">RT-COMP-1001</span></div>
+        <div class="tcard-row"><span class="k">Buyer</span><span class="v">Jordan Patel</span></div>
+        <div class="tcard-row"><span class="k">Seller</span><span class="v">Maple Retail Holdings Ltd.</span></div>
+        <div class="tcard-row"><span class="k">Property</span><span class="v">1128 4 Street SW, Calgary</span></div>
+        <div class="tcard-row"><span class="k">Sold price</span><span class="v">$425,000</span></div>
+        <div class="tcard-row"><span class="k">Possession</span><span class="v">2026-06-15</span></div>
+        <div class="tcard-row"><span class="k">Listing realtor</span><span class="v">Tammy MacDonald</span></div>
       </aside>
     </section>
 
-    <section class="section">
-      <div class="story">
-        <div>
-          <span class="eyebrow">What This Covers</span>
-          <h2>One operator story, not a stack explanation.</h2>
-          <p>A new transaction moves through document reading, review, folder setup, reminders, and drafted communication in a shape that brokers and realtors can understand quickly. The workflow stays human-reviewed at the points that matter.</p>
-        </div>
-        <div>
-          <span class="eyebrow">Why It Matters</span>
-          <ul class="rule-list">
-            <li>Less repeated manual follow-up around a new transaction.</li>
-            <li>Clear document readiness before work moves into the next step.</li>
-            <li>Consistent folder and reminder setup around the deal.</li>
-            <li>Drafted communication without auto-send risk.</li>
-          </ul>
+    <section class="flow" id="flow">
+      <div class="flow-head">
+        <h2>The five-step flow</h2>
+        <div class="flow-controls">
+          <span id="stepCounter">01 / 05</span>
+          <button id="prevBtn" aria-label="Previous step">&larr; Prev</button>
+          <button id="autoBtn">Auto-play</button>
+          <button id="nextBtn" aria-label="Next step">Next &rarr;</button>
         </div>
       </div>
 
-      <div class="proof-strip">
-        <article class="proof-card">
-          <img src="assets/fallback/generated/required-docs.png" alt="Document review surface">
-          <div class="proof-body">
-            <span class="proof-tag">Document check</span>
-            <h3>The source is read before work continues.</h3>
-            <p class="proof-copy">The operator can see what was found, what is missing, and whether the transaction is ready for review.</p>
-          </div>
-        </article>
+      <div class="flow-body">
+        <ol class="step-list" id="stepList">
+          <li class="step-item active" data-step="1" data-asset="assets/fallback/generated/intake-form.png" data-url="forms.google.com/u/0/d/RT-COMP-1001/intake">
+            <span class="step-num">01</span>
+            <div class="step-meta">
+              <span class="step-title">Intake form</span>
+              <span class="step-sub">Realtor submits the deal details from a Google Form.</span>
+              <span class="step-tool">Google Forms &rarr; Sheets</span>
+            </div>
+          </li>
+          <li class="step-item" data-step="2" data-asset="assets/fallback/generated/folder-tree.png" data-url="drive.google.com/drive/folders/DEMO_FOLDER_ID">
+            <span class="step-num">02</span>
+            <div class="step-meta">
+              <span class="step-title">Drive folder</span>
+              <span class="step-sub">A client folder is created with the trade taxonomy you already use.</span>
+              <span class="step-tool">Apps Script &rarr; Drive</span>
+            </div>
+          </li>
+          <li class="step-item" data-step="3" data-asset="assets/fallback/generated/calendar.png" data-url="calendar.google.com/calendar/u/0/r/eventedit/RT-COMP-1001-CONDITIONS">
+            <span class="step-num">03</span>
+            <div class="step-meta">
+              <span class="step-title">Calendar reminders</span>
+              <span class="step-sub">Condition waiver and possession reminders land on the calendar.</span>
+              <span class="step-tool">Apps Script &rarr; Calendar</span>
+            </div>
+          </li>
+          <li class="step-item" data-step="4" data-asset="assets/fallback/generated/trade-record.png" data-url="docs.google.com/spreadsheets/d/RT-COMP-1001/edit#gid=trade">
+            <span class="step-num">04</span>
+            <div class="step-meta">
+              <span class="step-title">Trade record</span>
+              <span class="step-sub">Claude extracts the deal fields from the source PDF and writes a row.</span>
+              <span class="step-tool">Claude &rarr; Sheets</span>
+            </div>
+          </li>
+          <li class="step-item" data-step="5" data-asset="assets/fallback/generated/draft-preview.png" data-url="mail.google.com/mail/u/0/#drafts/RT-COMP-1001">
+            <span class="step-num">05</span>
+            <div class="step-meta">
+              <span class="step-title">Draft email</span>
+              <span class="step-sub">A client follow-up email is staged in Gmail. Stays a draft until a human sends it.</span>
+              <span class="step-tool">Claude &rarr; Gmail (draft only)</span>
+            </div>
+          </li>
+        </ol>
 
-        <article class="proof-card">
-          <img src="assets/fallback/generated/trade-record.png" alt="Trade record surface">
-          <div class="proof-body">
-            <span class="proof-tag">Trade record</span>
-            <h3>The row becomes the working record.</h3>
-            <p class="proof-copy">Status, extracted details, source lineage, and next-step controls sit on the same transaction surface.</p>
+        <div class="step-stage">
+          <div class="stage-frame" id="stageFrame">
+            <div class="browser-bar">
+              <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+              <div class="url" id="stageUrl">forms.google.com/u/0/d/RT-COMP-1001/intake</div>
+            </div>
+            <div class="img-wrap">
+              <img id="stageImg" src="assets/fallback/generated/intake-form.png" alt="Step preview">
+            </div>
+            <div class="zoom-hint">Click to enlarge</div>
           </div>
-        </article>
+          <div class="stage-caption">
+            <p class="stage-caption-text" id="stageCaption">Realtor submits the deal details from a Google Form. The intake row is staged for the rest of the flow to read.</p>
+            <span class="stage-caption-meta" id="stageMeta">Step 01 / Google Forms</span>
+          </div>
+        </div>
+      </div>
 
-        <article class="proof-card">
-          <img src="assets/fallback/generated/draft-preview.png" alt="Draft email preview surface">
-          <div class="proof-body">
-            <span class="proof-tag">Draft email</span>
-            <h3>The client follow-up is staged, not sent.</h3>
-            <p class="proof-copy">A grounded draft is prepared from the document and extracted fields, then left for a human to review.</p>
-          </div>
-        </article>
+      <div class="flow-progress"><div class="bar" id="progressBar"></div></div>
+    </section>
+
+    <section class="honest">
+      <div class="honest-card real">
+        <span class="honest-tag">Real</span>
+        <h3>What actually runs</h3>
+        <ul>
+          <li>Apps Script reads the intake row and creates the Drive folder.</li>
+          <li>Claude extracts the trade record from the executed offer PDF.</li>
+          <li>Calendar reminders go in for condition waiver and possession.</li>
+          <li>The Gmail draft is written from the extracted fields.</li>
+          <li>Every step gets logged with timestamp and outcome.</li>
+        </ul>
+      </div>
+      <div class="honest-card fake">
+        <span class="honest-tag">Faked or held back</span>
+        <h3>What stays off for the demo</h3>
+        <ul>
+          <li>Sample client and property data. No real FINTRAC files.</li>
+          <li>Drafts never auto-send. The script generates and stops.</li>
+          <li>Auth runs against a test Google account, not the production inbox.</li>
+          <li>One missing condition waiver is left visible on purpose.</li>
+          <li>The full live setup is documented in the deploy notes, not on this page.</li>
+        </ul>
       </div>
     </section>
 
-    <section class="section">
-      <div class="step-grid">
-        <div class="step">
-          <span class="step-num">01</span>
-          <span class="step-title">Intake</span>
-          <p class="step-copy">The transaction starts from one selected source document instead of manual re-entry.</p>
-        </div>
-        <div class="step">
-          <span class="step-num">02</span>
-          <span class="step-title">Review</span>
-          <p class="step-copy">The document is read, normalized, and checked before the workflow moves forward.</p>
-        </div>
-        <div class="step">
-          <span class="step-num">03</span>
-          <span class="step-title">Setup</span>
-          <p class="step-copy">Folder structure and reminder steps are prepared around the transaction.</p>
-        </div>
-        <div class="step">
-          <span class="step-num">04</span>
-          <span class="step-title">Draft</span>
-          <p class="step-copy">The follow-up email is staged for review instead of being sent automatically.</p>
-          <div class="artifact-card">
-            <img src="assets/fallback/generated/draft-preview.png" alt="Draft excerpt">
-            <div class="artifact-body">
-              <span class="artifact-label">Draft excerpt</span>
-              <p class="artifact-copy"><strong>Subject:</strong> Next steps for 84 Maplewood Ct<br><strong>Opening:</strong> Thanks again for sending over the signed agreement. I have your transaction staged and the next setup items are ready for review.</p>
-            </div>
-          </div>
-        </div>
+    <section class="detail">
+      <h2>The shape of the transaction</h2>
+      <p class="sub">Sample data used through every step. Picked to look like a real Calgary commercial deal without being one.</p>
+      <div class="detail-grid">
+        <div class="detail-tile"><div class="label">Transaction</div><div class="val">RT-COMP-1001</div></div>
+        <div class="detail-tile"><div class="label">MLS number</div><div class="val">A2145678</div></div>
+        <div class="detail-tile"><div class="label">Contract</div><div class="val">MCC-TR-1001</div></div>
+        <div class="detail-tile"><div class="label">Sale date</div><div class="val">2026-05-19</div></div>
+        <div class="detail-tile"><div class="label">Possession</div><div class="val">2026-06-15</div></div>
+        <div class="detail-tile"><div class="label">Selling realtor</div><div class="val">Ava Singh</div></div>
+        <div class="detail-tile"><div class="label">Seller lawyer</div><div class="val">Jordan &amp; Co. Law</div></div>
+        <div class="detail-tile"><div class="label">Buyer lawyer</div><div class="val">Summit Legal</div></div>
+        <div class="detail-tile"><div class="label">Deposit holder</div><div class="val">MCC trust</div></div>
       </div>
     </section>
 
     <footer class="footer">
-      <span>Primary walk-through: <a href="packet/">open the packet</a></span>
-      <span class="footer-note">Sample data only. Gmail stays in draft-only mode, and the live Google account connection is a separate setup step after the roundtable.</span>
+      <span>Tammy MacDonald / Roundtable demo / May 2026</span>
+      <p class="note">Built for the May 21 realtor roundtable. Sample data only. No emails are sent. Live Google account connection is a separate setup step covered in the deploy notes.</p>
     </footer>
   </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged preview">
+    <button class="lightbox-close" id="lightboxClose">Close (Esc)</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <script>
+    (function () {
+      var items = Array.prototype.slice.call(document.querySelectorAll('.step-item'));
+      var stageImg = document.getElementById('stageImg');
+      var stageUrl = document.getElementById('stageUrl');
+      var stageCaption = document.getElementById('stageCaption');
+      var stageMeta = document.getElementById('stageMeta');
+      var stepCounter = document.getElementById('stepCounter');
+      var progressBar = document.getElementById('progressBar');
+      var prevBtn = document.getElementById('prevBtn');
+      var nextBtn = document.getElementById('nextBtn');
+      var autoBtn = document.getElementById('autoBtn');
+      var playBtn = document.getElementById('playBtn');
+      var stageFrame = document.getElementById('stageFrame');
+      var lightbox = document.getElementById('lightbox');
+      var lightboxImg = document.getElementById('lightboxImg');
+      var lightboxClose = document.getElementById('lightboxClose');
+
+      var current = 0;
+      var autoTimer = null;
+      var AUTO_MS = 6500;
+
+      function setStep(idx) {
+        if (idx < 0) idx = items.length - 1;
+        if (idx >= items.length) idx = 0;
+        current = idx;
+        items.forEach(function (el, i) { el.classList.toggle('active', i === idx); });
+        var item = items[idx];
+        var asset = item.getAttribute('data-asset');
+        var url = item.getAttribute('data-url');
+        var title = item.querySelector('.step-title').textContent;
+        var sub = item.querySelector('.step-sub').textContent;
+        var tool = item.querySelector('.step-tool').textContent;
+
+        stageImg.style.opacity = '0';
+        setTimeout(function () {
+          stageImg.src = asset;
+          stageImg.style.opacity = '1';
+        }, 160);
+
+        stageUrl.textContent = url;
+        stageCaption.textContent = sub;
+        var num = String(idx + 1).padStart(2, '0');
+        stageMeta.textContent = 'Step ' + num + ' / ' + tool;
+        stepCounter.textContent = num + ' / 05';
+        progressBar.style.width = ((idx + 1) * 20) + '%';
+      }
+
+      function next() { setStep(current + 1); }
+      function prev() { setStep(current - 1); }
+
+      function autoTick() {
+        if (current >= items.length - 1) {
+          stopAuto();
+          autoBtn.textContent = 'Replay flow';
+          return;
+        }
+        next();
+      }
+
+      function startAuto() {
+        if (autoTimer) return;
+        if (current >= items.length - 1) {
+          setStep(0);
+        }
+        autoBtn.classList.add('playing');
+        autoBtn.textContent = 'Pause';
+        autoTimer = setInterval(autoTick, AUTO_MS);
+      }
+
+      function stopAuto() {
+        if (!autoTimer) return;
+        clearInterval(autoTimer);
+        autoTimer = null;
+        autoBtn.classList.remove('playing');
+        autoBtn.textContent = 'Auto-play';
+      }
+
+      function toggleAuto() {
+        if (autoTimer) stopAuto(); else startAuto();
+      }
+
+      items.forEach(function (el, i) {
+        el.addEventListener('click', function () { stopAuto(); setStep(i); });
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stopAuto(); setStep(i); }
+        });
+        el.setAttribute('tabindex', '0');
+      });
+
+      prevBtn.addEventListener('click', function () { stopAuto(); prev(); });
+      nextBtn.addEventListener('click', function () { stopAuto(); next(); });
+      autoBtn.addEventListener('click', toggleAuto);
+      playBtn.addEventListener('click', function () {
+        document.getElementById('flow').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(function () { setStep(0); startAuto(); }, 400);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (lightbox.classList.contains('open')) {
+          if (e.key === 'Escape') closeLightbox();
+          return;
+        }
+        if (e.key === 'ArrowRight') { stopAuto(); next(); }
+        if (e.key === 'ArrowLeft') { stopAuto(); prev(); }
+        if (e.key === ' ' && document.activeElement === document.body) { e.preventDefault(); toggleAuto(); }
+      });
+
+      function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.add('open');
+      }
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        lightboxImg.src = '';
+      }
+      stageFrame.addEventListener('click', function () { openLightbox(stageImg.src); });
+      lightbox.addEventListener('click', closeLightbox);
+      lightboxClose.addEventListener('click', function (e) { e.stopPropagation(); closeLightbox(); });
+    })();
+  </script>
 </body>
 </html>

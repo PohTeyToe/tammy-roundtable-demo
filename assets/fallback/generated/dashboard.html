@@ -2,68 +2,153 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Dashboard</title>
+  <title>Realtor Workflow CRM - Google Sheets</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #edf2f7; color: #1f2937; }
-    .frame { padding: 28px; }
-    .card { background: #ffffff; border-radius: 18px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08); padding: 24px; }
-    h1 { margin: 0 0 8px; font-size: 28px; }
-    h2 { margin: 0 0 12px; font-size: 20px; }
-    p.sub { margin: 0 0 20px; color: #5b6573; font-size: 14px; }
-    .pill { display: inline-block; background: #dde7f5; color: #234; border-radius: 999px; padding: 6px 12px; font-size: 12px; margin-right: 8px; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { border-bottom: 1px solid #e5e7eb; padding: 10px 12px; vertical-align: top; text-align: left; }
-    th { background: #eef3f8; font-weight: 700; }
-    .status-ready { color: #166534; font-weight: 700; }
-    .status-missing { color: #b91c1c; font-weight: 700; }
-    .status-expected { color: #92400e; font-weight: 700; }
-    .grid { display: grid; gap: 18px; }
-    .grid-2 { grid-template-columns: 1.2fr 1fr; }
-    .note { background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 12px 14px; color: #9a3412; font-size: 13px; }
-    .tree ul { list-style: none; padding-left: 18px; margin: 0; }
-    .tree li { margin: 6px 0; }
-    .mail { background: #f8fafc; border: 1px solid #d8e1ec; border-radius: 14px; padding: 18px; white-space: pre-wrap; line-height: 1.5; }
-    .meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-    .meta .box { background: #f8fafc; border: 1px solid #d8e1ec; border-radius: 12px; padding: 12px 14px; min-width: 220px; }
-    .small { font-size: 12px; color: #6b7280; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: "Google Sans", "Roboto", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: #202124;
+      background: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app { min-height: 100vh; }
   </style>
 </head>
 <body>
-  <div class="frame">
-    <div class="card">
-      
-    <h1>Tammy Roundtable Demo Dashboard</h1>
-    <p class="sub">Safe demo surface. Sample data only. Gmail draft only. No auto-send.</p>
-    <div class="meta">
-      <div class="box"><strong>Workbook</strong><div class="status-ready">Ready</div><div class="small">Bound spreadsheet</div></div>
-      <div class="box"><strong>Demo Form</strong><div class="status-ready">Ready</div><div class="small">Google Form intake</div></div>
-      <div class="box"><strong>Demo Folder</strong><div class="status-ready">Ready</div><div class="small">Dedicated Drive container</div></div>
-      <div class="box"><strong>Demo Calendar</strong><div class="status-ready">Ready</div><div class="small">Dedicated calendar</div></div>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Transaction ID</th><th>Transaction Name</th><th>Current Step</th><th>Required Docs Status</th>
-          <th>Drive Folder</th><th>Calendar Status</th><th>Email Draft Status</th><th>Trade Record Status</th><th>Last Action Result</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>RT-COMP-1001</td>
-          <td>Jordan Patel - 1128 4 Street SW, Calgary, AB</td>
-          <td class="status-ready">Package Generated</td>
-          <td>Expected 1 / Received 6 / Missing 1</td>
-          <td>Open package folder</td>
-          <td class="status-ready">Calendar Ready</td>
-          <td class="status-ready">Draft Created</td>
-          <td class="status-ready">Trade Record Row 22</td>
-          <td class="status-ready">Generated successfully</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="note" style="margin-top:18px;">This synthetic local presentation render mirrors the seeded completed sample. It is safe to use if live Google auth is flaky on demo day, but it is not proof of a live Google-side run from this machine.</div>
   
+  <style>
+    body { background: #f8f9fa; color: #202124; font-size: 13px; }
+    .gs { display: grid; grid-template-rows: 48px 28px 40px 28px 1fr 32px; height: 100vh; min-height: 0; }
+    .gs-top {
+      display: flex; align-items: center; gap: 8px; padding: 4px 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .gs-icon-sheets {
+      width: 32px; height: 32px; background: #0f9d58; border-radius: 4px;
+      display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px; letter-spacing: 0.5px;
+    }
+    .gs-title-wrap { display: flex; flex-direction: column; line-height: 1.1; flex: 1; }
+    .gs-title { font-size: 18px; color: #202124; font-weight: 400; }
+    .gs-meta { font-size: 11px; color: #5f6368; margin-top: 2px; }
+    .gs-star { color: #5f6368; font-size: 18px; padding: 0 8px; }
+    .gs-right { display: flex; align-items: center; gap: 8px; }
+    .gs-share {
+      background: #c2e7ff; color: #001d35; padding: 8px 16px; border-radius: 999px;
+      font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .gs-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1a73e8; color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 500; }
+
+    .gs-menu { display: flex; gap: 4px; padding: 0 16px; font-size: 13px; color: #444746; align-items: center; }
+    .gs-menu .item { padding: 2px 8px; border-radius: 4px; }
+    .gs-toolbar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 8px; background: #f9fbfd; margin: 4px 8px; border-radius: 20px;
+      height: 36px;
+    }
+    .gs-tool { padding: 6px 8px; color: #444746; font-size: 13px; border-radius: 4px; }
+    .gs-tool.icon { width: 28px; text-align: center; }
+    .gs-divider { width: 1px; height: 20px; background: #dadce0; margin: 0 4px; }
+
+    .gs-name-box {
+      display: flex; align-items: center; gap: 8px; padding: 0 12px;
+      border-bottom: 1px solid #e0e0e0; font-size: 12px; color: #5f6368;
+    }
+    .gs-name-cell { width: 96px; padding: 2px 8px; border: 1px solid #dadce0; border-radius: 2px; background: #fff; font-size: 12px; color: #202124; }
+
+    .gs-sheet { overflow: hidden; }
+    .gs-tabs {
+      display: flex; align-items: stretch; border-top: 1px solid #e0e0e0; background: #f1f3f4;
+      padding: 0 8px;
+    }
+    .gs-tabs .add { padding: 6px 10px; color: #5f6368; font-size: 16px; }
+    .gs-tab {
+      padding: 6px 14px 5px; font-size: 12px; color: #5f6368; border-right: 1px solid #e0e0e0;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .gs-tab.active { background: #fff; color: #202124; font-weight: 500; border-bottom: 2px solid #0f9d58; }
+  </style>
+  <div class="gs">
+    <div class="gs-top">
+      <div class="gs-icon-sheets">≣</div>
+      <div class="gs-title-wrap">
+        <div class="gs-title">Realtor Workflow CRM <span class="gs-star">&#9734;</span></div>
+        <div class="gs-meta">File &nbsp;Edit &nbsp;View &nbsp;Insert &nbsp;Format &nbsp;Data &nbsp;Tools &nbsp;Extensions &nbsp;Help &nbsp;<span style="color:#188038;">Last edit was seconds ago</span></div>
+      </div>
+      <div class="gs-right">
+        <div class="gs-share">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#001d35"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+          Share
+        </div>
+        <div class="gs-avatar">T</div>
+      </div>
+    </div>
+    <div class="gs-menu">
+      <div class="item">File</div><div class="item">Edit</div><div class="item">View</div><div class="item">Insert</div><div class="item">Format</div><div class="item">Data</div><div class="item">Tools</div><div class="item">Extensions</div><div class="item">Help</div>
+    </div>
+    <div class="gs-toolbar">
+      <div class="gs-tool icon">&#8631;</div>
+      <div class="gs-tool icon">&#8634;</div>
+      <div class="gs-tool icon">&#128424;</div>
+      <div class="gs-tool icon">%</div>
+      <div class="gs-tool">100%</div>
+      <div class="gs-divider"></div>
+      <div class="gs-tool">$</div>
+      <div class="gs-tool">.0</div>
+      <div class="gs-tool">.00</div>
+      <div class="gs-tool">123 &#x25BE;</div>
+      <div class="gs-divider"></div>
+      <div class="gs-tool">Default (Arial) &#x25BE;</div>
+      <div class="gs-tool">10 &#x25BE;</div>
+      <div class="gs-divider"></div>
+      <div class="gs-tool" style="font-weight:700;">B</div>
+      <div class="gs-tool" style="font-style:italic;">I</div>
+      <div class="gs-tool" style="text-decoration:line-through;">S</div>
+      <div class="gs-tool" style="color:#d93025;">A</div>
+      <div class="gs-divider"></div>
+      <div class="gs-tool icon">&#9632;</div>
+      <div class="gs-tool icon">&#9647;</div>
+      <div class="gs-tool icon">&#8801;</div>
+      <div class="gs-tool icon">&#8676;</div>
+    </div>
+    <div class="gs-name-box">
+      <div class="gs-name-cell">A1</div>
+      <div style="color:#5f6368; padding-left:8px;">fx</div>
+      <div style="padding-left:8px; color:#202124;">Transaction ID</div>
+    </div>
+    <div class="gs-sheet">
+  <style>
+    .sg { font-family: "Roboto", Arial, sans-serif; font-size: 12px; color: #202124; background: #fff; overflow: hidden; }
+    .sg-row { display: flex; }
+    .sg-cell {
+      border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0;
+      padding: 4px 8px; min-width: 130px; height: 22px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      background: #fff;
+    }
+    .sg-row-num {
+      min-width: 48px; max-width: 48px; background: #f8f9fa;
+      color: #5f6368; text-align: center; font-size: 11px;
+      border-right: 1px solid #c0c0c0;
+    }
+    .sg-col-header .sg-cell { background: #f8f9fa; color: #5f6368; text-align: center; font-size: 11px; height: 22px; border-bottom: 1px solid #c0c0c0; }
+    .sg-col-letter { font-weight: 400; }
+    .sg-frozen { color: #fff; font-weight: 600; }
+    .sg-row-active .sg-cell { background: #e8f0fe; border-bottom: 1px solid #1a73e8; border-top: 1px solid #1a73e8; }
+    .sg-row-active .sg-cell:first-child + .sg-cell { border-left: 2px solid #1a73e8; }
+    .sg-row-num-active { background: #1a73e8 !important; color: #fff !important; }
+    .pill-rec, .pill-mis, .pill-exp { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; display: inline-block; }
+    .pill-rec { background: #e6f4ea; color: #137333; }
+    .pill-mis { background: #fce8e6; color: #c5221f; }
+    .pill-exp { background: #fef7e0; color: #b06000; }
+  </style>
+  <div class="sg"><div class="sg-row sg-col-header"><div class="sg-cell sg-row-num"></div><div class="sg-cell sg-col-letter">A</div><div class="sg-cell sg-col-letter">B</div><div class="sg-cell sg-col-letter">C</div><div class="sg-cell sg-col-letter">D</div><div class="sg-cell sg-col-letter">E</div><div class="sg-cell sg-col-letter">F</div><div class="sg-cell sg-col-letter">G</div><div class="sg-cell sg-col-letter">H</div><div class="sg-cell sg-col-letter">I</div><div class="sg-cell sg-col-letter">J</div><div class="sg-cell sg-col-letter">K</div><div class="sg-cell sg-col-letter">L</div></div><div class="sg-row"><div class="sg-cell sg-row-num">1</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Transaction ID</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Transaction Name</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Current Step</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Required Docs</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Drive Folder</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Calendar</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Email Draft</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Trade Record</div><div class="sg-cell sg-frozen" style="background:#0f9d58;">Last Action</div><div class="sg-cell sg-frozen" style="background:#0f9d58;"></div><div class="sg-cell sg-frozen" style="background:#0f9d58;"></div><div class="sg-cell sg-frozen" style="background:#0f9d58;"></div></div><div class="sg-row sg-row-active"><div class="sg-cell sg-row-num sg-row-num-active">2</div><div class="sg-cell">RT-COMP-1001</div><div class="sg-cell">Jordan Patel - 1128 4 Street SW, Calgary, AB</div><div class="sg-cell"><span class="pill-rec">Package Generated</span></div><div class="sg-cell">Expected 1 / Received 6 / Missing 1</div><div class="sg-cell">Open package folder</div><div class="sg-cell"><span class="pill-rec">Calendar Ready</span></div><div class="sg-cell"><span class="pill-rec">Draft Created</span></div><div class="sg-cell">Trade Record Row 22</div><div class="sg-cell">Generated successfully</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">3</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">4</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">5</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">6</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">7</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">8</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">9</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">10</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">11</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">12</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">13</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">14</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">15</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">16</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">17</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">18</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">19</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">20</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">21</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">22</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div><div class="sg-row "><div class="sg-cell sg-row-num ">23</div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div><div class="sg-cell"></div></div></div>
+  </div>
+    <div class="gs-tabs">
+      <div class="add">+</div>
+      <div class="gs-tab active">Trade Records &#x25BE;</div><div class="gs-tab ">RequiredDocs &#x25BE;</div><div class="gs-tab ">Folders &#x25BE;</div><div class="gs-tab ">Calendar &#x25BE;</div><div class="gs-tab ">Logs &#x25BE;</div>
     </div>
   </div>
+  
 </body>
 </html>
