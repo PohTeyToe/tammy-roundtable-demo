@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Transaction Workflow</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3ede4;
+      --paper: rgba(255, 250, 243, 0.94);
+      --paper-strong: rgba(255, 252, 247, 0.98);
+      --ink: #181613;
+      --muted: #5e5852;
+      --soft: #867f78;
+      --line: #d8cebf;
+      --rule: #d4c9b8;
+      --accent: #1f5d53;
+      --accent-deep: #184b44;
+      --accent-soft: #e1efe8;
+      --shadow: 0 20px 46px rgba(39, 31, 23, 0.08);
+      --serif: "EB Garamond", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      background:
+        radial-gradient(circle at top left, rgba(31, 93, 83, 0.14), transparent 26%),
+        linear-gradient(180deg, #f7f1e8 0%, var(--bg) 100%);
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 46px 22px 84px;
+    }
+
+    .stack > * {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 560ms ease forwards;
+    }
+
+    .stack > *:nth-child(1) { animation-delay: 0.04s; }
+    .stack > *:nth-child(2) { animation-delay: 0.10s; }
+    .stack > *:nth-child(3) { animation-delay: 0.16s; }
+    .stack > *:nth-child(4) { animation-delay: 0.22s; }
+    .stack > *:nth-child(5) { animation-delay: 0.28s; }
+    .stack > *:nth-child(6) { animation-delay: 0.34s; }
+
+    .masthead,
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .masthead {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section {
+      padding: 42px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 600;
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(48px, 6.4vw, 82px);
+      max-width: 780px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: clamp(34px, 4vw, 46px);
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.58;
+    }
+
+    .utility,
+    .rule-list li,
+    .meta-copy,
+    .step-copy,
+    .artifact-copy,
+    .footer-note,
+    .cta-line {
+      font-family: var(--sans);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.32fr) minmax(300px, 0.68fr);
+      gap: 34px;
+      align-items: end;
+      padding: 56px 0 42px;
+    }
+
+    .hero-copy p {
+      max-width: 640px;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 18px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 24px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #f7fffd;
+      font-family: var(--sans);
+      font-weight: 600;
+      border: 1px solid transparent;
+      box-shadow: 0 10px 24px rgba(31, 93, 83, 0.14);
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(31, 93, 83, 0.18);
+      background: var(--accent-deep);
+    }
+
+    .text-link {
+      color: var(--accent);
+      font-family: var(--sans);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 4px;
+    }
+
+    .record-card {
+      padding: 26px 24px 24px;
+      background: var(--paper);
+      border: 1px solid rgba(216, 206, 191, 0.88);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .record-kicker {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .record-title {
+      font-size: 36px;
+      line-height: 1.02;
+      margin-bottom: 14px;
+    }
+
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .record-label,
+    .artifact-label,
+    .proof-tag,
+    .step-num {
+      display: block;
+      margin-bottom: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .record-value {
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .story {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 34px;
+      align-items: start;
+    }
+
+    .rule-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .rule-list li {
+      padding: 14px 0;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .rule-list li:first-child {
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .proof-card,
+    .artifact-card {
+      background: var(--paper);
+      border: 1px solid rgba(216, 206, 191, 0.88);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .proof-card img,
+    .artifact-card img {
+      aspect-ratio: 1.22 / 1;
+      object-fit: cover;
+      border-bottom: 1px solid var(--line);
+      background: #e7dece;
+    }
+
+    .proof-body,
+    .artifact-body {
+      padding: 18px 18px 20px;
+    }
+
+    .proof-card h3,
+    .artifact-card h3 {
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .proof-copy,
+    .artifact-copy {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .step {
+      position: relative;
+      padding-top: 18px;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .step-title {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 25px;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+
+    .step-copy {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.56;
+    }
+
+    .artifact-card {
+      margin-top: 18px;
+      border-radius: 22px;
+    }
+
+    .artifact-card img {
+      aspect-ratio: 1.9 / 1;
+    }
+
+    .artifact-copy strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .footer {
+      padding-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 4px;
+    }
+
+    .footer-note {
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 14px;
+      max-width: 520px;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .story,
+      .proof-strip,
+      .step-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 28px 16px 54px;
+      }
+
+      .hero {
+        padding: 36px 0 28px;
+      }
+
+      h1 {
+        font-size: 54px;
+      }
+
+      .record-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap stack">
+    <header class="masthead">
+      <span>VFC / New Transaction Workflow</span>
+      <span>Roundtable Demo / May 2026</span>
+    </header>
+
+    <section class="hero section">
+      <div class="hero-copy">
+        <span class="eyebrow">Roundtable Walk-Through</span>
+        <h1>A new transaction begins with a source document.</h1>
+        <p>It ends with a reviewed record, a consistent folder, and a drafted client email, ready for a human to send. This page walks through that story, step by step.</p>
+        <div class="actions">
+          <a class="button" href="packet/">Open full walk-through</a>
+          <a class="text-link" href="assets/fallback/generated/dashboard.html">Open dashboard preview</a>
+        </div>
+      </div>
+
+      <aside class="record-card">
+        <div class="record-kicker">
+          <span>Transaction in view</span>
+          <span>Offer accepted</span>
+        </div>
+        <h2 class="record-title">84 Maplewood Ct</h2>
+        <p class="meta-copy">Extracted from the executed purchase agreement and staged for operator review before downstream setup.</p>
+        <div class="record-grid">
+          <div>
+            <span class="record-label">Buyer</span>
+            <div class="record-value">J. and M. Chen</div>
+          </div>
+          <div>
+            <span class="record-label">Source</span>
+            <div class="record-value">Executed purchase agreement PDF</div>
+          </div>
+          <div>
+            <span class="record-label">Current status</span>
+            <div class="record-value">Ready for review</div>
+          </div>
+          <div>
+            <span class="record-label">Next operator action</span>
+            <div class="record-value">Approve review, then generate the draft</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section">
+      <div class="story">
+        <div>
+          <span class="eyebrow">What This Covers</span>
+          <h2>One operator story, not a stack explanation.</h2>
+          <p>A new transaction moves through document reading, review, folder setup, reminders, and drafted communication in a shape that brokers and realtors can understand quickly. The workflow stays human-reviewed at the points that matter.</p>
+        </div>
+        <div>
+          <span class="eyebrow">Why It Matters</span>
+          <ul class="rule-list">
+            <li>Less repeated manual follow-up around a new transaction.</li>
+            <li>Clear document readiness before work moves into the next step.</li>
+            <li>Consistent folder and reminder setup around the deal.</li>
+            <li>Drafted communication without auto-send risk.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="proof-strip">
+        <article class="proof-card">
+          <img src="assets/fallback/generated/required-docs.png" alt="Document review surface">
+          <div class="proof-body">
+            <span class="proof-tag">Document check</span>
+            <h3>The source is read before work continues.</h3>
+            <p class="proof-copy">The operator can see what was found, what is missing, and whether the transaction is ready for review.</p>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <img src="assets/fallback/generated/trade-record.png" alt="Trade record surface">
+          <div class="proof-body">
+            <span class="proof-tag">Trade record</span>
+            <h3>The row becomes the working record.</h3>
+            <p class="proof-copy">Status, extracted details, source lineage, and next-step controls sit on the same transaction surface.</p>
+          </div>
+        </article>
+
+        <article class="proof-card">
+          <img src="assets/fallback/generated/draft-preview.png" alt="Draft email preview surface">
+          <div class="proof-body">
+            <span class="proof-tag">Draft email</span>
+            <h3>The client follow-up is staged, not sent.</h3>
+            <p class="proof-copy">A grounded draft is prepared from the document and extracted fields, then left for a human to review.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="step-grid">
+        <div class="step">
+          <span class="step-num">01</span>
+          <span class="step-title">Intake</span>
+          <p class="step-copy">The transaction starts from one selected source document instead of manual re-entry.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <span class="step-title">Review</span>
+          <p class="step-copy">The document is read, normalized, and checked before the workflow moves forward.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <span class="step-title">Setup</span>
+          <p class="step-copy">Folder structure and reminder steps are prepared around the transaction.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">04</span>
+          <span class="step-title">Draft</span>
+          <p class="step-copy">The follow-up email is staged for review instead of being sent automatically.</p>
+          <div class="artifact-card">
+            <img src="assets/fallback/generated/draft-preview.png" alt="Draft excerpt">
+            <div class="artifact-body">
+              <span class="artifact-label">Draft excerpt</span>
+              <p class="artifact-copy"><strong>Subject:</strong> Next steps for 84 Maplewood Ct<br><strong>Opening:</strong> Thanks again for sending over the signed agreement. I have your transaction staged and the next setup items are ready for review.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>Primary walk-through: <a href="packet/">open the packet</a></span>
+      <span class="footer-note">Sample data only. Gmail stays in draft-only mode, and the live Google account connection is a separate setup step after the roundtable.</span>
+    </footer>
+  </div>
+</body>
+</html>

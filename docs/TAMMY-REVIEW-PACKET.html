@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From Source Document To Drafted Follow-Up</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3ede3;
+      --paper: rgba(255, 250, 242, 0.95);
+      --ink: #181613;
+      --muted: #5c5650;
+      --soft: #857f78;
+      --line: #d7ccbc;
+      --rule: #d3c6b5;
+      --accent: #1f5d53;
+      --accent-soft: #e1efe8;
+      --shadow: 0 18px 38px rgba(38, 31, 24, 0.08);
+      --serif: "EB Garamond", Georgia, "Times New Roman", serif;
+      --sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      background:
+        radial-gradient(circle at top left, rgba(31, 93, 83, 0.12), transparent 30%),
+        linear-gradient(180deg, #f7f2ea 0%, var(--bg) 100%);
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 34px 18px 56px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+    }
+
+    h1 {
+      font-size: clamp(44px, 5vw, 70px);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(32px, 4vw, 42px);
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.58;
+    }
+
+    .hero,
+    .panel,
+    .step-card,
+    .proof-card {
+      background: var(--paper);
+      border: 1px solid rgba(215, 204, 188, 0.88);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero {
+      padding: 30px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow,
+    .step-num,
+    .proof-tag {
+      display: inline-block;
+      margin-bottom: 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .hero-note,
+    .step-copy,
+    .proof-copy,
+    .panel p,
+    .checklist,
+    .footer-note {
+      font-family: var(--sans);
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      font-size: 14px;
+      color: var(--soft);
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .step-card {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 18px;
+      padding: 22px 24px;
+    }
+
+    .step-num {
+      margin-bottom: 0;
+      font-size: 12px;
+      align-self: start;
+    }
+
+    .step-card p + p {
+      margin-top: 10px;
+    }
+
+    .step-copy {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .proof-grid,
+    .grid-two {
+      display: grid;
+      gap: 18px;
+    }
+
+    .proof-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .proof-card {
+      overflow: hidden;
+    }
+
+    .proof-card img {
+      aspect-ratio: 1.2 / 1;
+      object-fit: cover;
+      border-bottom: 1px solid var(--line);
+      background: #e7dece;
+    }
+
+    .proof-body,
+    .panel {
+      padding: 20px 22px 22px;
+    }
+
+    .proof-card h3 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .proof-copy {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .panel p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .panel p + p {
+      margin-top: 12px;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.58;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .checklist li + li {
+      margin-top: 10px;
+    }
+
+    .checklist li::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .footer {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .footer-note {
+      text-transform: none;
+      letter-spacing: 0;
+      max-width: 560px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 920px) {
+      .proof-grid,
+      .grid-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .step-card {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <span class="eyebrow">Roundtable Walk-Through</span>
+      <h1>From source document to drafted follow-up.</h1>
+      <p>This demo follows one new transaction from the moment a source document is selected through review, folder and reminder setup, and a drafted client email. The point is to show a workflow that a broker or realtor can understand quickly without losing the human gate at the moments that matter.</p>
+      <p class="hero-note">This walk-through uses sample data. Gmail stays in draft-only mode, so no email leaves the account.</p>
+    </section>
+
+    <section class="section step-list">
+      <article class="step-card">
+        <span class="step-num">01 / Intake</span>
+        <div>
+          <h3>The transaction starts from one selected document.</h3>
+          <p class="step-copy">Instead of retyping details into a new record, the operator points the workflow at a source file such as an executed purchase agreement. That source becomes the starting point for the transaction.</p>
+        </div>
+      </article>
+
+      <article class="step-card">
+        <span class="step-num">02 / Extraction</span>
+        <div>
+          <h3>The document is read and normalized before work continues.</h3>
+          <p class="step-copy">The workflow extracts the core transaction details, checks for missing fields, and records the result directly on the row. If the minimum information is not present, the operator sees that before the workflow moves downstream.</p>
+        </div>
+      </article>
+
+      <article class="step-card">
+        <span class="step-num">03 / Review</span>
+        <div>
+          <h3>A human approves the transaction before the next step.</h3>
+          <p class="step-copy">The stable pause point is review-ready, not auto-send. That means the operator can approve, reject, or reverse approval without losing track of the current attempt, source lineage, or notes.</p>
+        </div>
+      </article>
+
+      <article class="step-card">
+        <span class="step-num">04 / Setup</span>
+        <div>
+          <h3>Folder and reminder setup wrap around the deal.</h3>
+          <p class="step-copy">Once review is approved, the workflow can prepare the surrounding structure: where the files belong, what reminder or follow-up surfaces should exist, and how the transaction stays organized after intake.</p>
+        </div>
+      </article>
+
+      <article class="step-card">
+        <span class="step-num">05 / Draft</span>
+        <div>
+          <h3>The client email is staged as a draft.</h3>
+          <p class="step-copy">The drafted follow-up is grounded in the source document and normalized fields, then left for a human to review before sending. It helps the operator move faster without pretending the last mile should be automatic.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="section proof-grid">
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/required-docs.png" alt="Document review surface">
+        <div class="proof-body">
+          <span class="proof-tag">Document check</span>
+          <h3>What was found is visible.</h3>
+          <p class="proof-copy">The operator can point to the readiness check, the missing-field summary, and the status shift into review.</p>
+        </div>
+      </article>
+
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/trade-record.png" alt="Trade record surface">
+        <div class="proof-body">
+          <span class="proof-tag">Trade record</span>
+          <h3>The row is the control surface.</h3>
+          <p class="proof-copy">Attempt state, source lineage, next-step actions, and draft linkage all stay tied to the current transaction.</p>
+        </div>
+      </article>
+
+      <article class="proof-card">
+        <img src="../assets/fallback/generated/draft-preview.png" alt="Draft email surface">
+        <div class="proof-body">
+          <span class="proof-tag">Draft email</span>
+          <h3>The draft is ready for human review.</h3>
+          <p class="proof-copy">The workflow stages a client-facing message without crossing into auto-send or hiding the source context.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="section grid-two">
+      <article class="panel">
+        <span class="eyebrow">Why This Matters</span>
+        <p>This is meant to reduce the repeated setup work that comes with every new transaction: document reading, checking what is missing, getting the record into a stable state, and preparing a client follow-up without starting from a blank page each time.</p>
+        <p>The strongest part of the story is not abstract AI capability. It is the fact that the workflow stays grounded in one transaction and one source document while still keeping the operator in control.</p>
+      </article>
+
+      <article class="panel">
+        <span class="eyebrow">Where AI Helps</span>
+        <ul class="checklist">
+          <li>Reads the selected source document for transaction details.</li>
+          <li>Flags missing or incomplete information before work moves forward.</li>
+          <li>Normalizes extracted details into the working record.</li>
+          <li>Grounds the drafted email in the source and extracted fields.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <span>Roundtable demo / sample data</span>
+      <span class="footer-note">Live Google account connection and end-to-end browser proof are separate setup steps after the roundtable. This page is the showable workflow surface.</span>
+    </footer>
+  </div>
+</body>
+</html>

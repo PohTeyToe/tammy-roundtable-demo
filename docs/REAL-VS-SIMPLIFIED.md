@@ -1,30 +1,30 @@
 # Real Vs Simplified
 
-## Real
+## Real target
 
-- Google Form intake
-- Google Sheet dashboard/workbook
-- Google Drive folder creation
-- Google Calendar reminders
-- Gmail draft creation
-- visible action logging
+- authenticated Google Sheets, Drive, and Gmail execution
+- real browser proof from the current machine
+- real Claude-backed extraction and draft generation captured in Google surfaces
+- final evidence set tied to a successful live run
 
-## Simplified
+## Simplified repo target
 
-- no live client data
-- no inbox-trigger automation
-- no DocuSign or Outlook routing
-- no AI writing dependency
-- no auto-file classification
-- no PDF automation
-- no outbound email send
+- implemented Apps Script workflow and state model
+- explicit phase-separated operator actions
+- source-file lineage and attempt-aware row model
+- attempt-aware action log
+- shared Claude integration seam
+- narrow supported-source boundary with durable failures
+- rerunnable local validation commands
+- Tammy-facing review packet that does not overclaim live proof
 
-## Why
+## Why the simplification is acceptable
 
-This is a May 21 roundtable support artifact, not a finished operating system. The goal is one believable, safe transaction workflow that Tammy can show without creating production risk.
+The valuable work in this repo is the workflow model, operator surface, lineage model, and validation scaffolding. The current missing piece is external auth and execution proof, not uncertainty about what the artifact is supposed to do.
 
-## Fallback Pack Boundary
+## What still requires a later live pass
 
-- the fallback pack is a synthetic local presentation layer rendered from seeded sample data
-- it is safe to show when live Google auth or execution is flaky
-- it is not proof that the live Google workbook, form, calendar, or Gmail draft surfaces were exercised from this machine
+- Google auth
+- Apps Script remote execution
+- Playwright evidence from real Google surfaces
+- final pass/fail capture based on that live run

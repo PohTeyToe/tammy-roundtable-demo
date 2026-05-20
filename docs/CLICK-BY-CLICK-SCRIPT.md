@@ -1,24 +1,21 @@
 # Click-By-Click Script
 
-## Fallback mode
+## Recommended review path
 
 1. Open `Dashboard`.
-2. Say: `This is a safe demo workbook using sample data only.`
-3. Say: `If we use the fallback visuals, those are synthetic local presentation assets, not proof of a live Google-side run from this machine.`
-4. Point to `RT-COMP-1001`.
-5. Open the Drive folder link.
-6. Show that the package folder was created with Tammy's familiar client-folder structure.
-7. Return to `RequiredDocs` and point out `Received`, `Expected`, and `Missing`.
-8. Return to `Dashboard` and point out `Draft Created`, `Calendar Ready`, and `Trade Record Ready`.
-9. Open `TradeRecord` and show the simplified output.
-10. Mention that the email remains a draft and nothing auto-sends.
+2. Say: `This is the standalone roundtable demo repo, narrowed to a safe Google-native workflow with sample data only.`
+3. Say: `What is complete here is the workbook workflow, state model, source lineage, attempt-aware logging, and rerunnable validation surfaces.`
+4. Say: `What we are not claiming in this packet is authenticated live Google execution from this machine.`
+5. Open `TransactionIntake`.
+6. Point to the source-file fields, current-attempt fields, extraction fields, operator-notes area, Gmail draft lineage, and last result/error fields.
+7. Open the custom menu and point out `Run Extraction`, `Approve Review`, `Reject Review`, `Reverse Approval`, and `Generate Draft`.
+8. Open `ActionLog` and show the attempt-aware columns.
+9. Open `TradeRecord` and show the source-linked output surface.
+10. If a visual walkthrough helps, open the fallback artifacts and label them clearly as synthetic presentation support.
 
-## Live mode
+## If asked about live readiness
 
-1. Open the demo form from the `Dashboard`.
-2. Submit the live sample transaction or point to the already-submitted `RT-LIVE-1002` row.
-3. Open `TransactionIntake`.
-4. Click the `RT-LIVE-1002` row.
-5. Run `Tammy Roundtable Demo -> Generate Transaction Package`.
-6. Return to `Dashboard`.
-7. Show the new Drive link, calendar status, draft status, trade-record status, and action result.
+1. Open [docs/VERIFICATION.md](C:/VFC/tammy-roundtable-demo/docs/VERIFICATION.md:1).
+2. Point to the `Implemented and checked` section.
+3. Point to the `Not claimed yet` section.
+4. State that the next pass is Google auth plus browser validation, not more workflow redesign.

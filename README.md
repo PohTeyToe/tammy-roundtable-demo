@@ -1,62 +1,116 @@
 # Tammy Roundtable Demo
 
-Standalone Apps Script project for the May 21, 2026 Tammy roundtable artifact.
+Standalone Apps Script artifact for Tammy's May 21, 2026 roundtable workflow demo.
 
-This project is intentionally narrow:
+This repo now implements the phase-separated operator flow inside the bound workbook:
 
-- one Google Form intake
-- one bound Google Sheet dashboard/workbook
-- one manual operator action: `Generate Transaction Package`
-- one transaction-package folder tree
-- two calendar reminders
-- one Gmail draft
-- one simplified trade-record output
-- one visible action log
+- `Run Extraction`
+- `Approve Review`
+- `Reject Review`
+- `Reverse Approval`
+- `Generate Draft`
 
-## Current linked Google assets
+It also implements the attempt-aware row and log model, source-file lineage, shared Claude helper, seeded demo sources, and rerunnable local validation entrypoints.
 
-- Spreadsheet: `Tammy Roundtable Demo - Realtor Workflow CRM`
-- Script: bound Apps Script project linked through `.clasp.json`
+## Current completion target
 
-## Local commands
+The active finish line for this repo is now:
 
-```powershell
-cd C:\VFC\tammy-roundtable-demo
-clasp push
-clasp run setupDemoEnvironment
-clasp run seedDemoData
-clasp run runGenerateTransactionPackageByTransactionId --params '["RT-LIVE-1002"]'
-```
+- implementation-complete
+- pushed and rerunnable
+- Tammy-packet-ready
+- explicit about what is and is not live-verified
 
-`setupDemoEnvironment` provisions the dedicated demo folder, calendar, form, workbook tabs, reference data, and menu.
+This repo does **not** currently claim end-to-end live Google execution from this machine. That remains a later validation pass once Google auth and Apps Script execution are available.
 
-`seedDemoData` submits two sample form responses:
+## What is implemented
 
-- `RT-COMP-1001` seeded and fully generated for fallback/demo-walkthrough mode
-- `RT-LIVE-1002` seeded as the clean live happy-path transaction
+- bound Apps Script workbook workflow with explicit phase actions
+- row states:
+  - `Extraction Required`
+  - `Source Missing`
+  - `Source Changed`
+  - `Running Extraction`
+  - `Extracted`
+  - `Ready For Review`
+  - `Review Rejected`
+  - `Running Draft`
+  - `Draft Failed`
+  - `Draft Generated`
+- canonical transaction-row surface for source lineage, current attempt, extraction metadata, review status, Gmail draft lineage, and last result/error
+- attempt-aware `ActionLog`
+- shared Claude API helper for extraction and draft generation
+- narrow v1 source support:
+  - PDF
+  - JPG / JPEG / PNG
+  - Google Docs
+  - DOCX-style text export
+  - plain text
+- durable failure handling for unsupported sources and missing required extraction fields
+- Gmail draft update-in-place behavior on reruns
+- seeded sample source documents for PDF, image, text-doc, and unsupported-format paths
 
-## Separate test-account note
+## What is not claimed yet
 
-The current machine auth is live and usable, but it is currently authenticated as `abdalsf5@gmail.com`. If you need to re-home this into a truly separate test Google account, use the exact rebinding steps in [docs/DEPLOY.md](C:/VFC/tammy-roundtable-demo/docs/DEPLOY.md:1).
+- authenticated live execution from a Google account on this machine
+- working `clasp run` remote execution from the current auth chain
+- browser-proven real workbook, Drive, and Gmail surfaces for the new flow
+- live Claude-backed proof captured from Google surfaces
 
-## Start here for future work
+## Start here
 
 1. [AGENTS.md](C:/VFC/tammy-roundtable-demo/AGENTS.md:1)
 2. [docs/VERIFICATION.md](C:/VFC/tammy-roundtable-demo/docs/VERIFICATION.md:1)
 3. [docs/HANDOFF.md](C:/VFC/tammy-roundtable-demo/docs/HANDOFF.md:1)
-4. [docs/DEPLOY.md](C:/VFC/tammy-roundtable-demo/docs/DEPLOY.md:1)
+4. [docs/WALKTHROUGH.md](C:/VFC/tammy-roundtable-demo/docs/WALKTHROUGH.md:1)
+5. [docs/TAMMY-REVIEW-PACKET.html](C:/VFC/tammy-roundtable-demo/docs/TAMMY-REVIEW-PACKET.html)
 
-## Project layout
+## Working commands
 
-- `src/`: Apps Script source files pushed by `clasp`
-- `docs/`: walkthrough, deploy, fallback, and decision docs
-- `assets/fallback/generated/`: synthetic local presentation HTML + PNG assets rendered from the seeded completed sample; useful for fallback walkthroughs, not proof of live Google-side readiness
+```powershell
+cd C:\VFC\tammy-roundtable-demo
+npm run push
+npm run preflight:live
+npm run setup
+npm run seed
+npm run extract:live
+npm run approve:live
+npm run reject:live
+npm run reverse:live
+npm run draft:live
+npm run happy:live
+npm run smoke:live
+npm run playwright:workbook
+npm run playwright:capture
+npm run build:review-site
+npm run deploy:review-site
+```
 
-## Safety model
+## Repo layout
+
+- `src/`: Apps Script source files pushed with `clasp`
+- `scripts/`: local validation and Playwright helpers
+- `docs/`: walkthrough, verification, handoff, and Tammy-facing review packet
+- `site/`: static hosted front door for Vercel-style preview deployment
+- `assets/fallback/generated/`: synthetic local presentation assets rendered from seeded sample data
+
+## Hosted review site
+
+For a Tammy-facing hosted preview:
+
+```powershell
+cd C:\VFC\tammy-roundtable-demo
+npm run build:review-site
+npm run deploy:review-site
+```
+
+That builds a static review site into `dist/review-site` and then deploys it through Vercel if the CLI is authenticated, or through the claimable preview fallback if it is not.
+
+## Safety rules
 
 - sample data only
-- no live client docs
-- no FINTRAC docs
 - Gmail draft only
 - no auto-send
+- no live client docs
+- no FINTRAC docs
 - all actions logged

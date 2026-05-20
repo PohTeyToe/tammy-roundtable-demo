@@ -1,43 +1,50 @@
 # Handoff
 
-## Purpose
+## Current posture
 
-This project is the standalone May 21, 2026 Tammy roundtable support artifact:
+This repo has been simplified from a strict-live completion target to a cleaner and more honest handoff target:
 
-- one accepted-offer / new-transaction happy path
-- real Google core where available
-- simplified edges where safer
-- fallback-first presentation package
+- workflow implementation complete
+- local validation surfaces in place
+- Tammy-facing packet ready
+- live Google auth and browser proof deferred
 
-## Ready Now
+## What is done
 
-- Apps Script source is scaffolded and pushed
-- setup is non-destructive at the workbook-tab level
-- rerun refreshes calendar and Gmail draft outputs
-- fallback assets are generated locally and clearly labeled as synthetic presentation assets
-- walkthrough, click-path, and expectation-setting docs are in place
+- the old single `Generate Transaction Package` story has been replaced by the explicit phase model
+- the committed row-state model is implemented in code
+- the transaction row is now the canonical current-attempt surface
+- the action log is now attempt-aware
+- source-file handling is intentionally narrow and explicit for v1
+- one shared Claude helper is in place for extraction and draft generation
+- durable npm and PowerShell entrypoints exist for preflight, smoke, and later Playwright validation
+- the repo now includes a Tammy-facing packet that matches the simplified finish line
 
-## Still Open
+## What still blocks a true live-complete claim
 
-The only material blocker is live Google execution verification from this machine.
+- Google sign-in from this machine
+- Apps Script remote execution auth
+- GCP linkage for the bound script project
+- browser-captured evidence from real Sheets, Drive, and Gmail surfaces
 
-That path still needs:
+## Safest next move
 
-1. the intended separate test Google account authenticated on this machine
-2. a linked GCP `projectId` for the Apps Script project
-3. Apps Script API enabled for that GCP project
-4. a desktop OAuth client for that same project
-5. `clasp login` redone with project scopes
-6. then a real `setup -> seed -> generate` run against the dedicated demo assets
+If the next worker is doing presentation or review support:
 
-## Safest Next Move
+- use [docs/TAMMY-REVIEW-PACKET.html](C:/VFC/tammy-roundtable-demo/docs/TAMMY-REVIEW-PACKET.html)
+- use [docs/WALKTHROUGH.md](C:/VFC/tammy-roundtable-demo/docs/WALKTHROUGH.md:1)
+- keep the live-proof caveat explicit
 
-If the next worker is doing presentation support, use the fallback pack and leave the live path alone.
+If the next worker is doing live completion:
 
-If the next worker is doing operations/setup, work only on the auth/GCP execution chain until `clasp run` succeeds. Do not spend more time polishing the local artifact until the live blocker is cleared.
+1. fix Google auth first
+2. fix `clasp run` second
+3. capture real browser evidence third
+4. only then upgrade the packet language
 
-## What Not To Redo
+## What not to redo
 
-- do not re-expand the scope into inbox triggers, CRM, OneDrive parity, auth, or a custom web UI
+- do not collapse the phase model back into one action
+- do not re-expand the scope into the website lane or broader CRM work
 - do not relabel fallback assets as live proof
-- do not disturb the separate `C:\VFC\mcc-ops` website lane
+- do not spend more time polishing docs until the next worker decides whether the goal is presentation-ready or truly live-complete

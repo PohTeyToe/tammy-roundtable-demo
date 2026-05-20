@@ -8,10 +8,22 @@
     "pull": "clasp pull",
     "status": "clasp status",
     "deployments": "clasp deployments",
+    "preflight:live": "powershell -ExecutionPolicy Bypass -File ./scripts/live-preflight.ps1",
     "setup": "clasp run setupDemoEnvironment",
     "seed": "clasp run seedDemoData",
-    "generate:live": "clasp run runGenerateTransactionPackageByTransactionId --params '[\"RT-LIVE-1002\"]'",
-    "rerun:live": "clasp run rerunTransactionPackageByTransactionId --params '[\"RT-LIVE-1002\"]'",
-    "render:fallback": "node scripts/render-fallback-assets.mjs"
+    "extract:live": "clasp run runExtractionByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "approve:live": "clasp run approveReviewByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "reject:live": "clasp run rejectReviewByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "reverse:live": "clasp run reverseApprovalByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "draft:live": "clasp run generateDraftByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "happy:live": "clasp run runHappyPathByTransactionId --params '[\"RT-LIVE-1002\"]'",
+    "smoke:live": "powershell -ExecutionPolicy Bypass -File ./scripts/live-smoke.ps1",
+    "playwright:workbook": "powershell -ExecutionPolicy Bypass -File ./scripts/playwright-live-validation.ps1 -Target workbook",
+    "playwright:drive": "powershell -ExecutionPolicy Bypass -File ./scripts/playwright-live-validation.ps1 -Target drive",
+    "playwright:gmail": "powershell -ExecutionPolicy Bypass -File ./scripts/playwright-live-validation.ps1 -Target gmail",
+    "playwright:capture": "powershell -ExecutionPolicy Bypass -File ./scripts/playwright-capture-evidence.ps1",
+    "render:fallback": "node scripts/render-fallback-assets.mjs",
+    "build:review-site": "node scripts/build-review-site.mjs",
+    "deploy:review-site": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-review-site-preview.ps1"
   }
 }

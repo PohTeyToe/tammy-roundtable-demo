@@ -1,5 +1,22 @@
 # Deploy
 
+## Hosted preview site
+
+Use this when the goal is a Tammy-facing review URL rather than a live Apps Script run:
+
+```powershell
+cd C:\VFC\tammy-roundtable-demo
+npm run build:review-site
+npm run deploy:review-site
+```
+
+Behavior:
+
+- if a `VERCEL_TOKEN` is available, the wrapper uses it directly for non-interactive deploys
+- if `vercel` is already authenticated, the wrapper builds locally, then deploys the repo with the review-site output settings from `vercel.json`
+- if `vercel` is not authenticated, the wrapper falls back to the claimable preview deploy script from the shared Vercel skill
+- the hosted site is presentation-safe only and does not claim live Google proof
+
 ## Default path
 
 If current Google auth is acceptable for a smoke run:

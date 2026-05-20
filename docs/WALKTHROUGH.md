@@ -1,24 +1,26 @@
 # Walkthrough
 
-## What Tammy can show
+## What Tammy can show now
 
-1. Open the workbook.
-2. Show the `Dashboard` asset links and transaction table.
-3. Open the seeded completed transaction `RT-COMP-1001` and, if needed, the synthetic local fallback assets as the fallback presentation path.
-4. Open the generated transaction package folder.
-5. Show the required-doc visibility in `RequiredDocs`.
-6. Show the draft-only email status in `Dashboard`.
-7. Show the simplified trade-record output in `TradeRecord`.
-8. For the live path, submit or point to the `New Transaction Intake Demo` form.
-9. Select the new row in `TransactionIntake`.
-10. Run `Tammy Roundtable Demo -> Generate Transaction Package`.
+1. Open the workbook and show the custom `Tammy Roundtable Demo` menu.
+2. Open `TransactionIntake` and point to the implemented phase states and source-lineage columns.
+3. Show that the operator flow is now split into `Run Extraction`, `Approve Review`, `Reject Review`, `Reverse Approval`, and `Generate Draft`.
+4. Open `Dashboard` and show the status summary, source label, attempt number, Drive folder link, calendar state, draft state, trade-record state, and last result.
+5. Open `ActionLog` and show the attempt-aware audit trail.
+6. Open `TradeRecord` and show that the output is tied to the current attempt and source file.
+7. If needed, open the seeded fallback assets for a presentation-safe visual walkthrough.
 
-## What the live path proves
+## What this now proves
 
-- form intake lands in the sheet
-- one explicit operator action generates the package
-- folder structure follows Tammy's current operating model
-- reminders are created
-- a review draft is created
-- trade-record output is populated
-- all actions are logged
+- the repo is no longer a one-click happy-path scaffold
+- the workbook model now reflects extraction, review, reversal, rejection, and draft phases explicitly
+- source-file lineage, current-attempt lineage, and draft lineage are first-class row concepts
+- the log schema matches the committed attempt-aware structure
+- the repo has durable local entrypoints for setup, smoke, and later browser validation
+
+## What this does not prove yet
+
+- real Google-authenticated execution from this machine
+- live Sheets, Drive, and Gmail browser proof for the new phase model
+- remote `clasp run` success under the intended auth chain
+- live Claude output captured from Google surfaces
