@@ -286,11 +286,11 @@
 
     <section class="section step-list">
       <article class="step-card">
-        <span class="step-num">01 / Intake form</span>
+        <span class="step-num">01 / Signed agreement</span>
         <div>
-          <h3>A realtor submits the deal from a Google Form.</h3>
-          <p class="step-copy">Buyer, seller, property, sold price, possession date, MLS number, and the executed offer PDF. The form output lands as a row in the CRM workbook. No retyping into a database.</p>
-          <p class="step-copy"><strong>Stack:</strong> Google Forms &rarr; Google Sheets.</p>
+          <h3>Realtor uploads the signed DocuSign agreement.</h3>
+          <p class="step-copy">Exclusive Buyer Agreement or Exclusive Seller Agreement. The system reads it, detects buyer or seller side, and uses it as the trigger for every downstream step. No retyping.</p>
+          <p class="step-copy"><strong>Stack:</strong> DocuSign &rarr; Apps Script.</p>
         </div>
       </article>
 
@@ -313,10 +313,10 @@
       </article>
 
       <article class="step-card">
-        <span class="step-num">04 / Trade record</span>
+        <span class="step-num">04 / Trade record + Realtor checklist</span>
         <div>
-          <h3>Claude extracts the deal fields from the offer PDF.</h3>
-          <p class="step-copy">Buyer, seller, sold price, sale date, possession date, MLS number, contract number, listing realtor, selling realtor. The extracted row writes back to the workbook with the source filename so you can trace it. One condition waiver is left flagged as missing on purpose so the demo shows the missing-doc row.</p>
+          <h3>The row writes back to the workbook. The validation checklist sits at the bottom.</h3>
+          <p class="step-copy">Claude extracts buyer, seller, sold price, sale date, possession date, MLS number, contract number, and both realtor names from the agreement. The row writes back with the source filename so you can trace it. Below the row, the Realtor validation checklist tracks signed agreement, FINTRAC, deposit, lawyers, MLS copy, condition waiver, possession, and trade record review. Seven complete in this sample, three pending.</p>
           <p class="step-copy"><strong>Stack:</strong> Claude &rarr; Google Sheets.</p>
         </div>
       </article>
@@ -333,11 +333,11 @@
 
     <section class="section proof-grid">
       <article class="proof-card">
-        <img src="../assets/fallback/generated/intake-form.png" alt="Intake form mockup">
+        <img src="../assets/fallback/generated/agreement-upload.png" alt="Signed agreement upload mockup">
         <div class="proof-body">
-          <span class="proof-tag">Intake form</span>
-          <h3>Realtor submits the deal.</h3>
-          <p class="proof-copy">Buyer, seller, property, sold price, possession date, MLS number, and the executed offer PDF.</p>
+          <span class="proof-tag">Signed agreement</span>
+          <h3>Realtor uploads the DocuSign agreement.</h3>
+          <p class="proof-copy">Exclusive Buyer or Seller agreement. Buyer or seller side is detected, fields are extracted, and the workflow takes over.</p>
         </div>
       </article>
 

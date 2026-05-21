@@ -654,8 +654,8 @@
 
     <section class="hero">
       <div>
-        <h1>When a deal closes, <span class="accent">five things</span> should happen on their own.</h1>
-        <p class="lede">This is the demo for the realtor roundtable. One sample transaction moves from intake form to a drafted Gmail in about thirty seconds. Click any step to see what actually runs. Nothing emails anyone.</p>
+        <h1>When a Realtor closes a deal, <span class="accent">five things</span> should happen on their own.</h1>
+        <p class="lede">Built for the realtor roundtable. Step 1 is uploading the signed DocuSign agreement. From there the Drive folder, trade record, calendar reminders, and Gmail draft all set themselves up. The validation checklist at the bottom of the trade record is the Realtor anchor.</p>
         <div class="cta-row">
           <button class="btn btn-primary" id="playBtn">Watch the flow</button>
           <a class="btn btn-ghost" href="packet/">Open the full packet</a>
@@ -690,12 +690,12 @@
 
       <div class="flow-body">
         <ol class="step-list" id="stepList">
-          <li class="step-item active" data-step="1" data-asset="assets/fallback/generated/intake-form.png" data-url="forms.google.com/u/0/d/RT-COMP-1001/intake">
+          <li class="step-item active" data-step="1" data-asset="assets/fallback/generated/agreement-upload.png" data-url="workflow.realtor/upload/RT-COMP-1001">
             <span class="step-num">01</span>
             <div class="step-meta">
-              <span class="step-title">Intake form</span>
-              <span class="step-sub">Realtor submits the deal details from a Google Form.</span>
-              <span class="step-tool">Google Forms &rarr; Sheets</span>
+              <span class="step-title">Signed agreement</span>
+              <span class="step-sub">Realtor uploads the signed DocuSign agreement (Exclusive Buyer or Seller). The system reads it and starts the flow.</span>
+              <span class="step-tool">DocuSign &rarr; Apps Script</span>
             </div>
           </li>
           <li class="step-item" data-step="2" data-asset="assets/fallback/generated/folder-tree.png" data-url="drive.google.com/drive/folders/DEMO_FOLDER_ID">
@@ -717,8 +717,8 @@
           <li class="step-item" data-step="4" data-asset="assets/fallback/generated/trade-record.png" data-url="docs.google.com/spreadsheets/d/RT-COMP-1001/edit#gid=trade">
             <span class="step-num">04</span>
             <div class="step-meta">
-              <span class="step-title">Trade record</span>
-              <span class="step-sub">Claude extracts the deal fields from the source PDF and writes a row.</span>
+              <span class="step-title">Trade record + checklist</span>
+              <span class="step-sub">Claude extracts the deal fields and writes the row. The Realtor validation checklist sits at the bottom: signed agreement, FINTRAC, deposit, lawyers, condition waiver, possession, trade record review.</span>
               <span class="step-tool">Claude &rarr; Sheets</span>
             </div>
           </li>
@@ -739,7 +739,7 @@
               <div class="url" id="stageUrl">forms.google.com/u/0/d/RT-COMP-1001/intake</div>
             </div>
             <div class="img-wrap">
-              <img id="stageImg" src="assets/fallback/generated/intake-form.png" alt="Step preview">
+              <img id="stageImg" src="assets/fallback/generated/agreement-upload.png" alt="Step preview">
             </div>
             <div class="zoom-hint">Click to enlarge</div>
           </div>
@@ -758,11 +758,11 @@
         <span class="honest-tag">Real</span>
         <h3>What actually runs</h3>
         <ul>
-          <li>Apps Script reads the intake row and creates the Drive folder.</li>
-          <li>Claude extracts the trade record from the executed offer PDF.</li>
-          <li>Calendar reminders go in for condition waiver and possession.</li>
-          <li>The Gmail draft is written from the extracted fields.</li>
-          <li>Every step gets logged with timestamp and outcome.</li>
+          <li>Realtor uploads the signed DocuSign agreement (Exclusive Buyer or Seller).</li>
+          <li>Apps Script detects buyer or seller side and creates the Drive folder.</li>
+          <li>Claude extracts the trade record fields from the agreement and writes the row.</li>
+          <li>The trade record carries the Realtor validation checklist at the bottom.</li>
+          <li>Calendar reminders cover condition waiver and possession. Gmail draft is staged.</li>
         </ul>
       </div>
       <div class="honest-card fake">

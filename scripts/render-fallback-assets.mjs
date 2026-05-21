@@ -66,11 +66,11 @@ const pages = [
     render: renderDashboard,
   },
   {
-    name: 'intake-form',
-    title: 'New Transaction Intake - Google Forms',
+    name: 'agreement-upload',
+    title: 'Realtor Workflow - Upload signed agreement',
     width: 1300,
     height: 1000,
-    render: renderIntakeForm,
+    render: renderAgreementUpload,
   },
   {
     name: 'required-docs',
@@ -83,7 +83,7 @@ const pages = [
     name: 'trade-record',
     title: 'Realtor Workflow CRM - Google Sheets',
     width: 1600,
-    height: 920,
+    height: 1180,
     render: renderTradeRecord,
   },
   {
@@ -222,7 +222,144 @@ function iconDoc() {
 
 // ---- 1. Google Forms intake ------------------------------------------------
 
-function renderIntakeForm() {
+function renderAgreementUpload() {
+  return `
+  <style>
+    body { background: #f5f7fb; color: #1f2937; }
+    .au-shell { max-width: 980px; margin: 0 auto; padding: 32px 18px 60px; }
+    .au-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4px 18px; border-bottom: 1px solid #e2e6ed; margin-bottom: 26px;
+    }
+    .au-brand { display: flex; align-items: center; gap: 12px; }
+    .au-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: #1f5d53; }
+    .au-brand-text { font-weight: 600; font-size: 15px; color: #16140f; }
+    .au-step { font-size: 12px; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; }
+    .au-h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 6px; color: #16140f; }
+    .au-sub { color: #5f6b78; font-size: 15px; margin: 0 0 24px; max-width: 620px; line-height: 1.5; }
+    .au-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
+    .au-card {
+      background: #fff; border: 1px solid #e2e6ed; border-radius: 14px; padding: 22px 22px 20px;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+    }
+    .au-card h3 { font-size: 14px; color: #6b7280; margin: 0 0 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .au-drop {
+      border: 2px dashed #1f5d53; border-radius: 12px; padding: 18px;
+      background: #eaf5f1; display: flex; align-items: center; gap: 14px;
+    }
+    .au-drop .pdf-icon {
+      width: 44px; height: 56px; flex-shrink: 0; border-radius: 6px;
+      background: linear-gradient(135deg, #d93025 0%, #b8261c 100%); color: #fff;
+      display: grid; place-items: center; font-weight: 700; font-size: 12px;
+      box-shadow: 0 2px 6px rgba(217,48,37,0.25);
+    }
+    .au-drop .fname { font-size: 15px; font-weight: 600; color: #16140f; margin: 0 0 4px; line-height: 1.3; }
+    .au-drop .fmeta { font-size: 12px; color: #5f6b78; }
+    .au-drop .signed-pill {
+      display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+      background: #d8f3dc; color: #1b4332; border-radius: 999px; font-size: 11px; font-weight: 600;
+      margin-top: 6px;
+    }
+    .au-drop .signed-pill::before { content: "✓"; font-size: 11px; }
+    .au-divider { height: 1px; background: #e2e6ed; margin: 18px 0; }
+    .au-detected {
+      display: grid; gap: 10px;
+    }
+    .au-row {
+      display: grid; grid-template-columns: 140px 1fr; gap: 14px;
+      font-size: 13.5px; padding: 6px 0;
+    }
+    .au-row .k { color: #6b7280; font-weight: 500; }
+    .au-row .v { color: #16140f; font-weight: 500; }
+    .au-row .v.tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 2px 9px; background: #e1efe8; color: #1f5d53;
+      border-radius: 6px; font-size: 12px; width: fit-content;
+    }
+    .au-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .au-btn {
+      padding: 10px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+      background: #1f5d53; color: #fff; box-shadow: 0 1px 2px rgba(31,93,83,0.25);
+    }
+    .au-btn.ghost { background: #fff; color: #16140f; border: 1px solid #d8dde4; box-shadow: none; }
+    .au-flow {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .au-flow-step {
+      display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start;
+      padding: 10px 0;
+    }
+    .au-flow-step .marker {
+      width: 24px; height: 24px; border-radius: 50%; background: #d8f3dc; color: #1b4332;
+      display: grid; place-items: center; font-size: 13px; font-weight: 700; margin-top: 1px;
+    }
+    .au-flow-step.pending .marker { background: #f1f4f8; color: #9aa3ad; }
+    .au-flow-step .step-title { font-size: 14px; color: #16140f; font-weight: 600; margin: 0 0 2px; line-height: 1.3; }
+    .au-flow-step .step-sub { font-size: 12.5px; color: #5f6b78; line-height: 1.4; margin: 0; }
+    .au-foot { font-size: 12px; color: #8a8e94; padding-top: 18px; }
+  </style>
+  <div class="au-shell">
+    <div class="au-bar">
+      <div class="au-brand">
+        <span class="dot"></span>
+        <span class="au-brand-text">Realtor Workflow</span>
+      </div>
+      <span class="au-step">Step 1 of 5 / Upload signed agreement</span>
+    </div>
+
+    <h1 class="au-h1">Upload your signed DocuSign agreement.</h1>
+    <p class="au-sub">Drop the executed Exclusive Buyer Agreement or Exclusive Seller Agreement. The system reads it, creates the Drive folder, and seeds the trade record from the agreement fields.</p>
+
+    <div class="au-grid">
+      <div class="au-card">
+        <h3>Uploaded agreement</h3>
+        <div class="au-drop">
+          <div class="pdf-icon">PDF</div>
+          <div>
+            <p class="fname">Exclusive Buyer Agreement - Jordan Patel.pdf</p>
+            <div class="fmeta">408 KB / signed via DocuSign</div>
+            <div class="signed-pill">All parties signed</div>
+          </div>
+        </div>
+
+        <div class="au-divider"></div>
+
+        <h3>Detected from the agreement</h3>
+        <div class="au-detected">
+          <div class="au-row"><span class="k">Agreement type</span><span class="v tag">Buyer-side</span></div>
+          <div class="au-row"><span class="k">Buyer</span><span class="v">${escapeHtml(sample.buyer1)}</span></div>
+          <div class="au-row"><span class="k">Seller</span><span class="v">${escapeHtml(sample.seller1)}</span></div>
+          <div class="au-row"><span class="k">Property</span><span class="v">${escapeHtml(sample.dealAddress)}</span></div>
+          <div class="au-row"><span class="k">Sold price</span><span class="v">${escapeHtml(sample.soldPrice)}</span></div>
+          <div class="au-row"><span class="k">Possession date</span><span class="v">${escapeHtml(sample.possessionDate)}</span></div>
+          <div class="au-row"><span class="k">MLS number</span><span class="v">${escapeHtml(sample.mlsNumber)}</span></div>
+          <div class="au-row"><span class="k">Listing realtor</span><span class="v">${escapeHtml(sample.listingRealtor)}</span></div>
+        </div>
+
+        <div class="au-actions">
+          <div class="au-btn">Create folder + start trade record</div>
+          <div class="au-btn ghost">Re-upload</div>
+        </div>
+      </div>
+
+      <div class="au-card">
+        <h3>What happens next</h3>
+        <div class="au-flow">
+          <div class="au-flow-step"><div class="marker">✓</div><div><p class="step-title">Agreement parsed</p><p class="step-sub">Buyer-side detected. Eight fields extracted with the source filename preserved.</p></div></div>
+          <div class="au-flow-step pending"><div class="marker">2</div><div><p class="step-title">Drive folder created</p><p class="step-sub">Named after the transaction with your existing subfolder taxonomy.</p></div></div>
+          <div class="au-flow-step pending"><div class="marker">3</div><div><p class="step-title">Trade record seeded</p><p class="step-sub">Row appears in the CRM workbook with the validation checklist at the bottom.</p></div></div>
+          <div class="au-flow-step pending"><div class="marker">4</div><div><p class="step-title">Calendar reminders</p><p class="step-sub">Condition waiver and possession dates land on the calendar.</p></div></div>
+          <div class="au-flow-step pending"><div class="marker">5</div><div><p class="step-title">Gmail draft staged</p><p class="step-sub">Client follow-up sits as a draft. Stays a draft until you send it.</p></div></div>
+        </div>
+        <p class="au-foot">Drafts never auto-send. Apps Script runs against a test Google account.</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// (Old Forms-styled renderer kept below for reference only - unused.)
+function renderIntakeForm_unused() {
   return `
   <style>
     body { background: #f0ebf8; }
@@ -817,12 +954,12 @@ function renderSheetsChrome({ activeTab, contentHtml }) {
   `;
 }
 
-function sheetGrid({ columns, rows, highlightRow = -1, frozenHeaderColor = '#0f9d58' }) {
+function sheetGrid({ columns, rows, highlightRow = -1, frozenHeaderColor = '#0f9d58', rowCount = null }) {
   // Build columns A,B,C..., a wide row of fixed widths
   const colLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
   const visibleCols = columns.length;
   const totalCols = Math.max(visibleCols, 12);
-  const totalRows = Math.max(rows.length + 8, 22);
+  const totalRows = rowCount != null ? rowCount : Math.max(rows.length + 8, 22);
 
   let headerRow = `<div class="sg-row sg-col-header"><div class="sg-cell sg-row-num"></div>`;
   for (let i = 0; i < totalCols; i += 1) {
@@ -896,8 +1033,88 @@ function renderTradeRecord() {
     sample.saleDate, sample.possessionDate, sample.mlsNumber, sample.contractNumber, sample.listingRealtor,
     sample.sellingRealtor, { html: '<span class="pill-rec">Package Generated</span>' },
   ];
-  const grid = sheetGrid({ columns, rows: [dataRow], highlightRow: 0 });
-  return renderSheetsChrome({ activeTab: 'Trade Records', contentHtml: grid });
+  const grid = sheetGrid({ columns, rows: [dataRow], highlightRow: 0, rowCount: 4 });
+
+  const checklist = [
+    ['Signed agreement (Exclusive Buyer / Seller)', 'Complete', '2026-05-19', 'Exclusive Buyer Agreement uploaded via DocuSign'],
+    ['Buyer identity verified (FINTRAC)', 'Complete', '2026-05-19', 'On file'],
+    ['Seller identity verified (FINTRAC)', 'Complete', '2026-05-19', 'On file'],
+    ['Deposit confirmed', 'Complete', '2026-05-19', 'From buyer agent'],
+    ['MLS copy on file', 'Complete', '2026-05-18', 'Pulled from MLS export'],
+    ['Buyer lawyer contact', 'Complete', '2026-05-19', 'Summit Legal'],
+    ['Seller lawyer contact', 'Complete', '2026-05-19', 'Jordan &amp; Co.'],
+    ['Condition waiver / fulfillment', 'Pending', '', 'Due 2026-05-21'],
+    ['Possession confirmed', 'Pending', '', 'Scheduled 2026-06-15'],
+    ['Trade record review', 'Pending', '', 'Closing checklist sign-off'],
+  ];
+
+  const checklistHtml = `
+    <div class="tr-checklist">
+      <div class="tr-cl-banner">
+        <span class="tr-cl-badge">Realtor validation</span>
+        <span class="tr-cl-title">Trade record checklist</span>
+        <span class="tr-cl-meta">7 of 10 complete / 3 pending</span>
+      </div>
+      <div class="tr-cl-grid">
+        <div class="tr-cl-row tr-cl-head">
+          <div>Item</div><div>Status</div><div>Date</div><div>Notes</div>
+        </div>
+        ${checklist.map(([item, status, date, notes]) => {
+          const isDone = status === 'Complete';
+          return `
+            <div class="tr-cl-row">
+              <div class="tr-cl-item">
+                <span class="tr-cl-check ${isDone ? 'on' : 'off'}">${isDone ? '✓' : ''}</span>
+                ${item}
+              </div>
+              <div><span class="tr-cl-pill ${isDone ? 'pill-rec' : 'pill-exp'}">${status}</span></div>
+              <div class="tr-cl-date">${date || '—'}</div>
+              <div class="tr-cl-notes">${notes}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+    <style>
+      .tr-checklist {
+        font-family: "Roboto", Arial, sans-serif;
+        background: #fff; padding: 14px 18px 20px;
+        border-top: 2px solid #1a73e8; margin-top: 2px;
+      }
+      .tr-cl-banner {
+        display: flex; align-items: center; gap: 14px;
+        padding: 0 0 12px; border-bottom: 1px solid #e0e0e0; margin-bottom: 10px;
+      }
+      .tr-cl-badge {
+        background: #1f5d53; color: #fff; padding: 4px 12px; border-radius: 999px;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      }
+      .tr-cl-title { font-size: 16px; font-weight: 600; color: #202124; }
+      .tr-cl-meta { margin-left: auto; font-size: 12px; color: #5f6368; }
+      .tr-cl-grid { display: flex; flex-direction: column; }
+      .tr-cl-row {
+        display: grid; grid-template-columns: minmax(280px, 1.8fr) 120px 130px minmax(180px, 1.6fr);
+        gap: 0; padding: 8px 0; border-bottom: 1px solid #f1f3f4;
+        font-size: 13px; color: #202124; align-items: center;
+      }
+      .tr-cl-head {
+        font-size: 11px; font-weight: 600; color: #5f6368; text-transform: uppercase;
+        letter-spacing: 0.05em; padding: 6px 0; border-bottom: 1px solid #c0c0c0;
+      }
+      .tr-cl-item { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+      .tr-cl-check {
+        width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center;
+        font-size: 12px; font-weight: 700; flex-shrink: 0;
+      }
+      .tr-cl-check.on { background: #1f5d53; color: #fff; }
+      .tr-cl-check.off { background: #fff; border: 1.5px solid #c0c0c0; color: transparent; }
+      .tr-cl-date { color: #5f6368; font-size: 12px; }
+      .tr-cl-notes { color: #5f6368; font-size: 12px; }
+      .tr-cl-pill { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+    </style>
+  `;
+
+  return renderSheetsChrome({ activeTab: 'Trade Records', contentHtml: grid + checklistHtml });
 }
 
 // ---- 5. Required Docs (Sheets tab) -----------------------------------------

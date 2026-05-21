@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T22:20:29.857Z",
+  "generatedAt": "2026-05-21T03:43:15.782Z",
   "note": "Synthetic local presentation renders from the seeded sample transaction. Safe to show if live Google auth is unavailable, but not proof of a live Google-side run.",
   "files": [
     {
@@ -8,9 +8,9 @@
       "png": "dashboard.png"
     },
     {
-      "name": "intake-form",
-      "html": "intake-form.html",
-      "png": "intake-form.png"
+      "name": "agreement-upload",
+      "html": "agreement-upload.html",
+      "png": "agreement-upload.png"
     },
     {
       "name": "required-docs",
