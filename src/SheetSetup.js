@@ -13,7 +13,6 @@ function trdEnsureReferenceDataSheet() {
   trdUpsertRowsByFirstColumn(sheet, TRD_CONFIG.referenceRows, 2);
   const assetRows = [
     ['asset.demoFolderId', trdGetProperty(TRD_CONFIG.propertyKeys.demoFolderId) || '', 'Dedicated demo folder ID'],
-    ['asset.formId', trdGetProperty(TRD_CONFIG.propertyKeys.formId) || '', 'Dedicated demo form ID'],
     ['asset.calendarId', trdGetProperty(TRD_CONFIG.propertyKeys.calendarId) || '', 'Dedicated demo calendar ID'],
     ['asset.workbookId', trdGetSpreadsheet().getId(), 'Bound workbook ID'],
     ['config.claudeApiUrl', trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiUrl) || TRD_CONFIG.defaultClaudeConfig.apiUrl, 'Claude Messages API endpoint'],
@@ -47,15 +46,14 @@ function trdEnsureDashboardSheet() {
 
 function trdRefreshDashboardAssets() {
   const sheet = trdEnsureSheet(TRD_CONFIG.sheetNames.dashboard);
-  const formId = trdGetProperty(TRD_CONFIG.propertyKeys.formId) || '';
-  const folderId = trdGetProperty(TRD_CONFIG.propertyKeys.demoFolderId) || '';
-  const calendarId = trdGetProperty(TRD_CONFIG.propertyKeys.calendarId) || '';
+  const userProps = PropertiesService.getUserProperties();
+  const folderId = userProps.getProperty('TRD_USER_DEMO_FOLDER_ID') || trdGetProperty(TRD_CONFIG.propertyKeys.demoFolderId) || '';
+  const calendarId = userProps.getProperty('TRD_USER_CALENDAR_ID') || trdGetProperty(TRD_CONFIG.propertyKeys.calendarId) || '';
   const spreadsheetId = trdGetSpreadsheet().getId();
   const apiConfigured = trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiKey) ? 'Configured' : 'Missing';
   const assetRows = [
-    ['Workbook', spreadsheetId ? 'Ready' : 'Missing', trdCreateHyperlinkFormula(trdGetSpreadsheet().getUrl(), 'Open workbook'), 'Bound spreadsheet'],
-    ['Demo Form', formId ? 'Ready' : 'Missing', formId ? trdCreateHyperlinkFormula(FormApp.openById(formId).getPublishedUrl(), 'Open form') : '', 'Google Form intake'],
-    ['Demo Folder', folderId ? 'Ready' : 'Missing', folderId ? trdCreateHyperlinkFormula(trdGetFolderUrl(folderId), 'Open folder') : '', 'Dedicated Drive container'],
+    ['Workbook', spreadsheetId ? 'Ready' : 'Missing', trdCreateHyperlinkFormula(trdGetSpreadsheet().getUrl(), 'Open workbook'), 'Per-visitor workbook'],
+    ['Demo Folder', folderId ? 'Ready' : 'Missing', folderId ? trdCreateHyperlinkFormula(trdGetFolderUrl(folderId), 'Open folder') : '', 'Per-visitor Drive folder'],
     ['Demo Calendar', calendarId ? 'Ready' : 'Missing', calendarId || '', 'Dedicated calendar ID'],
     ['Claude Runtime', apiConfigured, trdGetProperty(TRD_CONFIG.propertyKeys.claudeExtractionModel) || trdGetProperty(TRD_CONFIG.propertyKeys.claudeModel) || TRD_CONFIG.defaultClaudeConfig.model, 'Script properties drive runtime AI config'],
   ];

@@ -43,12 +43,9 @@ function setupDemoEnvironment() {
     resultSummary: 'Setup started',
   });
   const folder = trdEnsureDemoFolder();
-  const form = trdEnsureFormAndIntakeSheet();
+  trdEnsureFormAndIntakeSheet();
   const calendar = trdEnsureDemoCalendar();
   trdEnsureWorkbookStructure();
-  trdSetProperty(TRD_CONFIG.propertyKeys.demoFolderId, folder.getId());
-  trdSetProperty(TRD_CONFIG.propertyKeys.formId, form.getId());
-  trdSetProperty(TRD_CONFIG.propertyKeys.calendarId, calendar.getId());
   trdEnsureReferenceDataSheet();
   trdRefreshDashboardAssets();
   trdLogAction({
@@ -60,7 +57,6 @@ function setupDemoEnvironment() {
   trdAlert('Demo environment is ready.');
   return {
     folderId: folder.getId(),
-    formId: form.getId(),
     calendarId: calendar.getId(),
     spreadsheetId: trdGetSpreadsheet().getId(),
   };
@@ -224,34 +220,26 @@ function trdEnsureSampleResponse(sampleTransaction) {
   if (existingRow !== -1) {
     return existingRow;
   }
-
-  const formId = trdRequire(trdGetProperty(TRD_CONFIG.propertyKeys.formId), 'Form ID is missing. Run setup first.');
-  const form = FormApp.openById(formId);
-  const itemsByTitle = {};
-  form.getItems().forEach(function (item) {
-    itemsByTitle[item.getTitle()] = item;
-  });
-
-  const response = form.createResponse();
+  trdEnsureIntakeSheetFormHeaders();
+  const intakeSheet = trdGetIntakeSheet();
+  const headerMap = trdGetHeaderMap(intakeSheet);
+  const rowNumber = intakeSheet.getLastRow() + 1;
+  if (headerMap['Timestamp']) {
+    intakeSheet.getRange(rowNumber, headerMap['Timestamp']).setValue(new Date());
+  }
   TRD_CONFIG.formFields.forEach(function (field) {
-    const item = itemsByTitle[field.title];
-    if (!item) {
-      throw new Error(`Missing form item ${field.title}.`);
-    }
+    const column = headerMap[field.title];
+    if (!column) return;
     const value = sampleTransaction[field.key];
     if (field.type === 'date') {
       const parsedDate = value ? trdParseDate(value) : null;
       if (parsedDate) {
-        response.withItemResponse(item.asDateItem().createResponse(parsedDate));
+        intakeSheet.getRange(rowNumber, column).setValue(parsedDate);
       }
-    } else if (field.type === 'paragraph') {
-      response.withItemResponse(item.asParagraphTextItem().createResponse(trdAsString(value)));
     } else {
-      response.withItemResponse(item.asTextItem().createResponse(trdAsString(value) || 'TBD'));
+      intakeSheet.getRange(rowNumber, column).setValue(trdAsString(value) || 'TBD');
     }
   });
-  response.submit();
-  Utilities.sleep(1200);
   trdEnsureTransactionIntakeColumns();
   return trdFindIntakeRowByTransactionId(sampleTransaction.transactionId);
 }

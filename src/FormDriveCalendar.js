@@ -1,26 +1,39 @@
 function trdEnsureDemoFolder() {
-  const existingId = trdGetProperty(TRD_CONFIG.propertyKeys.demoFolderId);
-  if (existingId) {
+  const userProps = PropertiesService.getUserProperties();
+  const userKey = 'TRD_USER_DEMO_FOLDER_ID';
+  const userFolderId = userProps.getProperty(userKey) || trdGetProperty(TRD_CONFIG.propertyKeys.demoFolderId);
+  if (userFolderId) {
     try {
-      return DriveApp.getFolderById(existingId);
+      const folder = DriveApp.getFolderById(userFolderId);
+      userProps.setProperty(userKey, folder.getId());
+      return folder;
     } catch (error) {
       trdLogAction({
         phase: TRD_CONFIG.phases.setup,
         rowStatus: '',
-        outputReference: existingId,
+        outputReference: userFolderId,
         resultSummary: 'Demo folder lookup warning',
         errorText: error.message,
       });
     }
   }
 
-  const spreadsheetFile = DriveApp.getFileById(trdGetSpreadsheet().getId());
-  const parents = spreadsheetFile.getParents();
-  const parentFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  let parentFolder;
+  try {
+    const spreadsheetFile = DriveApp.getFileById(trdGetSpreadsheet().getId());
+    const parents = spreadsheetFile.getParents();
+    parentFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  } catch (e) {
+    parentFolder = DriveApp.getRootFolder();
+  }
   const matchingFolders = parentFolder.getFoldersByName(TRD_CONFIG.demoFolderName);
   const folder = matchingFolders.hasNext() ? matchingFolders.next() : parentFolder.createFolder(TRD_CONFIG.demoFolderName);
-  trdSetProperty(TRD_CONFIG.propertyKeys.demoFolderId, folder.getId());
-  trdMoveFileToFolderIfNeeded(spreadsheetFile, folder);
+  userProps.setProperty(userKey, folder.getId());
+  try {
+    trdMoveFileToFolderIfNeeded(DriveApp.getFileById(trdGetSpreadsheet().getId()), folder);
+  } catch (moveError) {
+    // Spreadsheet may be locked under a parent the script can't reach (e.g. user-owned). Ignore.
+  }
   return folder;
 }
 
@@ -49,51 +62,35 @@ function trdMoveFileToFolderIfNeeded(file, folder) {
 }
 
 function trdEnsureFormAndIntakeSheet() {
-  const existingId = trdGetProperty(TRD_CONFIG.propertyKeys.formId);
-  let form = null;
-
-  if (existingId) {
-    try {
-      form = FormApp.openById(existingId);
-    } catch (error) {
-      trdLogAction({
-        phase: TRD_CONFIG.phases.setup,
-        rowStatus: '',
-        outputReference: existingId,
-        resultSummary: 'Demo form lookup warning',
-        errorText: error.message,
-      });
-    }
-  }
-
-  if (!form) {
-    form = FormApp.create(TRD_CONFIG.formTitle);
-    trdSetProperty(TRD_CONFIG.propertyKeys.formId, form.getId());
-  }
-
-  form.setTitle(TRD_CONFIG.formTitle);
-  form.setDescription(TRD_CONFIG.formDescription);
-  form.setCollectEmail(false);
-  form.setLimitOneResponsePerUser(false);
-  trdSyncFormItems(form);
-
-  const spreadsheetId = trdGetSpreadsheet().getId();
-  let currentDestinationId = null;
-  try {
-    currentDestinationId = form.getDestinationId();
-  } catch (destinationError) {
-    currentDestinationId = null;
-  }
-  if (currentDestinationId !== spreadsheetId) {
-    form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheetId);
-  }
-
-  Utilities.sleep(1200);
+  // Upload-driven flow: no Google Form needed per visitor. Just ensure the
+  // intake sheet exists with the expected column shape so direct row writes
+  // and form-style readers stay compatible.
   trdEnsureTransactionIntakeSheetExists();
+  trdEnsureIntakeSheetFormHeaders();
   trdEnsureTransactionIntakeColumns();
-  const demoFolder = trdEnsureDemoFolder();
-  trdMoveFileToFolderIfNeeded(DriveApp.getFileById(form.getId()), demoFolder);
-  return form;
+  return null;
+}
+
+function trdEnsureIntakeSheetFormHeaders() {
+  const sheet = trdGetIntakeSheet();
+  const expectedHeaders = ['Timestamp'].concat(TRD_CONFIG.formFields.map(function (field) { return field.title; }));
+  const lastColumn = sheet.getLastColumn();
+  if (lastColumn === 0) {
+    sheet.getRange(1, 1, 1, expectedHeaders.length).setValues([expectedHeaders]);
+    sheet.setFrozenRows(1);
+    return;
+  }
+  const existingHeaders = sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(String);
+  expectedHeaders.forEach(function (header) {
+    if (existingHeaders.indexOf(header) === -1) {
+      const nextColumn = sheet.getLastColumn() + 1;
+      sheet.getRange(1, nextColumn).setValue(header);
+      existingHeaders.push(header);
+    }
+  });
+  if (sheet.getFrozenRows() < 1) {
+    sheet.setFrozenRows(1);
+  }
 }
 
 function trdSyncFormItems(form) {
@@ -159,10 +156,16 @@ function trdEnsureTransactionIntakeSheetExists() {
 }
 
 function trdEnsureDemoCalendar() {
-  const existingId = trdGetProperty(TRD_CONFIG.propertyKeys.calendarId);
+  const userProps = PropertiesService.getUserProperties();
+  const userKey = 'TRD_USER_CALENDAR_ID';
+  const existingId = userProps.getProperty(userKey) || trdGetProperty(TRD_CONFIG.propertyKeys.calendarId);
   if (existingId) {
     try {
-      return CalendarApp.getCalendarById(existingId);
+      const cal = CalendarApp.getCalendarById(existingId);
+      if (cal) {
+        userProps.setProperty(userKey, cal.getId());
+        return cal;
+      }
     } catch (error) {
       trdLogAction({
         phase: TRD_CONFIG.phases.setup,
@@ -178,7 +181,7 @@ function trdEnsureDemoCalendar() {
     return calendar.getName() === TRD_CONFIG.calendarName;
   });
   const calendar = matching.length ? matching[0] : CalendarApp.createCalendar(TRD_CONFIG.calendarName, { timeZone: TRD_CONFIG.timeZone });
-  trdSetProperty(TRD_CONFIG.propertyKeys.calendarId, calendar.getId());
+  userProps.setProperty(userKey, calendar.getId());
   return calendar;
 }
 

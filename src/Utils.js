@@ -1,5 +1,22 @@
 function trdGetSpreadsheet() {
-  return SpreadsheetApp.getActiveSpreadsheet();
+  const active = SpreadsheetApp.getActiveSpreadsheet();
+  if (active) {
+    return active;
+  }
+  const userProps = PropertiesService.getUserProperties();
+  const propKey = 'TRD_USER_SPREADSHEET_ID';
+  let id = userProps.getProperty(propKey);
+  if (id) {
+    try {
+      return SpreadsheetApp.openById(id);
+    } catch (lookupError) {
+      id = null;
+    }
+  }
+  const userLabel = (Session.getActiveUser().getEmail() || 'workbook').split('@')[0];
+  const ss = SpreadsheetApp.create('Tammy Roundtable Demo - ' + userLabel);
+  userProps.setProperty(propKey, ss.getId());
+  return ss;
 }
 
 function trdGetSheet(name) {
