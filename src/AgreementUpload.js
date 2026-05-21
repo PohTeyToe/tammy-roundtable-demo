@@ -50,6 +50,12 @@ function runFromAgreementUploadByDriveFileId(driveFileId) {
   }
 
   const folder = trdCreateOrReuseTransactionFolder(synthetic, '');
+  const propertyType = trdDetectPropertyType(file.getName(), extracted);
+  const subName = TRD_CONFIG.folderConditionalSubfolders[propertyType] || TRD_CONFIG.folderConditionalSubfolders.residential;
+  const existingSub = folder.getFoldersByName(subName);
+  if (!existingSub.hasNext()) {
+    folder.createFolder(subName);
+  }
   trdMoveFileToFolderIfNeeded(file, folder);
 
   trdSetRowValuesByHeader(intakeSheet, rowNumber, {
@@ -79,6 +85,7 @@ function runFromAgreementUploadByDriveFileId(driveFileId) {
   return {
     transactionId: transactionId,
     side: side,
+    propertyType: propertyType,
     folderId: folder.getId(),
     folderUrl: trdGetFolderUrl(folder.getId()),
     sourceFileId: file.getId(),
@@ -109,6 +116,14 @@ function trdDetectAgreementSide(fileName, extracted) {
   if (extracted && trdAsString(extracted.sellingRealtor)) return 'buyer';
   if (extracted && trdAsString(extracted.listingRealtor)) return 'seller';
   return 'buyer';
+}
+
+function trdDetectPropertyType(fileName, extracted) {
+  const lower = (fileName || '').toLowerCase();
+  if (lower.indexOf('condo') !== -1) return 'condo';
+  const summary = (extracted && trdAsString(extracted.summary || '')).toLowerCase();
+  if (summary.indexOf('condo') !== -1 || summary.indexOf('condominium') !== -1) return 'condo';
+  return 'residential';
 }
 
 function trdResolveAgreementClientEmail(side, extracted) {
