@@ -341,10 +341,9 @@ function Crest({ className = "" }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex w-7 h-7 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[13px] leading-none tracking-[0.02em] ${className}`}
-      style={{ fontFeatureSettings: "'ss01' on" }}
+      className={`inline-flex w-7 h-7 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[12.5px] leading-none tracking-[0.02em] pb-[1px] ${className}`}
     >
-      <span className="-translate-y-[0.5px]">MCC</span>
+      MCC
     </span>
   );
 }

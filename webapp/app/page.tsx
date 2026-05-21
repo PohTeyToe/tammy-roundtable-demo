@@ -152,10 +152,9 @@ function Crest() {
   return (
     <span
       aria-hidden="true"
-      className="inline-flex w-8 h-8 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[15px] leading-none tracking-[0.02em]"
-      style={{ fontFeatureSettings: "'ss01' on" }}
+      className="inline-flex w-8 h-8 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[14.5px] leading-none tracking-[0.02em] pb-[1px]"
     >
-      <span className="-translate-y-[0.5px]">MCC</span>
+      MCC
     </span>
   );
 }
