@@ -8,6 +8,46 @@ export const DEMO_FOLDER_NAME = "MCC Realtor Workflow Demo";
 export const WORKBOOK_NAME = "MCC Realtor Workflow Demo - Trade Record";
 export const CALENDAR_NAME = "MCC Realtor Workflow Demo";
 
+// Mirrors Apps Script TRD_CONFIG.folderConditionalSubfolders in
+// C:/VFC/tammy-roundtable-demo/src/Config.js. One nested folder per deal:
+// residential -> RMS & Photos, condo -> Condo Docs. No other subfolders.
+export const PROPERTY_TYPE_SUBFOLDERS: Record<"residential" | "condo", string> = {
+  residential: "RMS & Photos",
+  condo: "Condo Docs",
+};
+
+// Mirrors Apps Script TRD_CONFIG.sheetNames.requiredDocs and
+// TRD_CONFIG.requiredDocsHeaders in C:/VFC/tammy-roundtable-demo/src/Config.js.
+// The 6-item checklist Tammy anchored in her May 20 revision set lives on
+// this dedicated tab so it sits "at the bottom of the [workbook]" the same
+// way the Apps Script backend exposes it.
+export const REQUIRED_DOCS_SHEET = "RequiredDocs";
+export const REQUIRED_DOCS_HEADERS = [
+  "Transaction ID",
+  "Document Category",
+  "Document Name",
+  "Status",
+  "Notes",
+  "Last Updated",
+] as const;
+
+// Mirrors Apps Script TRD_CONFIG.requiredDocs and
+// TRD_CONFIG.sampleDocStatusPresets.live. Agreement + MLS are 'Received' on
+// seed because the agreement just landed; the rest are 'Expected' until the
+// realtor checks them off. Order matches the Apps Script config exactly.
+export const REQUIRED_DOCS_ITEMS: ReadonlyArray<{
+  category: string;
+  name: string;
+  initialStatus: "Received" | "Expected";
+}> = [
+  { category: "Agreement", name: "Signed Agreement (Exclusive Buyer / Seller)", initialStatus: "Received" },
+  { category: "Contract", name: "Purchase Contract & Amendments", initialStatus: "Expected" },
+  { category: "Deposit", name: "Deposit Cheque / Proof of Deposit", initialStatus: "Expected" },
+  { category: "Conditions", name: "Condition Waiver / Fulfillment", initialStatus: "Expected" },
+  { category: "Compliance", name: "MLS Listing", initialStatus: "Received" },
+  { category: "Closing", name: "Trade Record Review", initialStatus: "Expected" },
+];
+
 type FetchInit = RequestInit & { searchParams?: Record<string, string> };
 
 async function call<T>(token: string, url: string, init: FetchInit = {}): Promise<T> {
@@ -99,12 +139,21 @@ export async function findOrCreateWorkbook(token: string, parentFolderId: string
   const list = await call<{ files: { id: string; name: string }[] }>(token, `${DRIVE_API}/files`, {
     searchParams: { q, fields: "files(id,name)" },
   });
-  if (list.files && list.files.length) return list.files[0].id;
+  if (list.files && list.files.length) {
+    // Workbook already exists from an earlier run. Make sure the RequiredDocs
+    // tab + header are present (handles existing workbooks created before this
+    // patch shipped). Idempotent.
+    await ensureRequiredDocsSheet(token, list.files[0].id);
+    return list.files[0].id;
+  }
   const created = await call<{ spreadsheetId: string }>(token, SHEETS_API, {
     method: "POST",
     body: JSON.stringify({
       properties: { title: WORKBOOK_NAME },
-      sheets: [{ properties: { title: "TradeRecord" } }],
+      sheets: [
+        { properties: { title: "TradeRecord" } },
+        { properties: { title: REQUIRED_DOCS_SHEET } },
+      ],
     }),
   });
   await call(token, `${DRIVE_API}/files/${created.spreadsheetId}`, {
@@ -140,7 +189,118 @@ export async function findOrCreateWorkbook(token: string, parentFolderId: string
     searchParams: { valueInputOption: "USER_ENTERED" },
     body: JSON.stringify({ values: [headers] }),
   });
+  // Seed the RequiredDocs header row. Per-transaction rows are appended later
+  // by ensureRequiredDocsForTransaction.
+  await call(
+    token,
+    `${SHEETS_API}/${created.spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A1:append`,
+    {
+      method: "POST",
+      searchParams: { valueInputOption: "USER_ENTERED" },
+      body: JSON.stringify({ values: [Array.from(REQUIRED_DOCS_HEADERS)] }),
+    }
+  );
   return created.spreadsheetId;
+}
+
+// Idempotent: ensures the RequiredDocs tab exists on an existing workbook and
+// that the header row is in place. Mirrors Apps Script trdEnsureRequiredDocsSheet.
+export async function ensureRequiredDocsSheet(token: string, spreadsheetId: string) {
+  const meta = await call<{
+    sheets: { properties: { sheetId: number; title: string } }[];
+  }>(token, `${SHEETS_API}/${spreadsheetId}`, {
+    searchParams: { fields: "sheets.properties(sheetId,title)" },
+  });
+  const exists = meta.sheets?.some(
+    (s) => s.properties.title === REQUIRED_DOCS_SHEET
+  );
+  if (!exists) {
+    await call(token, `${SHEETS_API}/${spreadsheetId}:batchUpdate`, {
+      method: "POST",
+      body: JSON.stringify({
+        requests: [
+          {
+            addSheet: {
+              properties: { title: REQUIRED_DOCS_SHEET },
+            },
+          },
+        ],
+      }),
+    });
+  }
+  // Always confirm the header row (safe on either fresh or existing tab).
+  const existing = await call<{ values?: string[][] }>(
+    token,
+    `${SHEETS_API}/${spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A1:F1`
+  );
+  if (!existing.values || existing.values.length === 0) {
+    await call(
+      token,
+      `${SHEETS_API}/${spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A1:append`,
+      {
+        method: "POST",
+        searchParams: { valueInputOption: "USER_ENTERED" },
+        body: JSON.stringify({ values: [Array.from(REQUIRED_DOCS_HEADERS)] }),
+      }
+    );
+  }
+}
+
+// Seed the 6-item checklist for a transaction id, but only if rows for that
+// transaction id don't already exist. Mirrors the Apps Script live preset
+// (TRD_CONFIG.sampleDocStatusPresets.live).
+export async function ensureRequiredDocsForTransaction(
+  token: string,
+  spreadsheetId: string,
+  transactionId: string
+) {
+  if (!transactionId) return;
+  await ensureRequiredDocsSheet(token, spreadsheetId);
+  const all = await call<{ values?: string[][] }>(
+    token,
+    `${SHEETS_API}/${spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A2:F1000`
+  );
+  const already = (all.values || []).some(
+    (row) => (row?.[0] || "").trim() === transactionId
+  );
+  if (already) return;
+  const nowIso = new Date().toISOString();
+  const rows = REQUIRED_DOCS_ITEMS.map((item) => [
+    transactionId,
+    item.category,
+    item.name,
+    item.initialStatus,
+    "",
+    nowIso,
+  ]);
+  await call(
+    token,
+    `${SHEETS_API}/${spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A1:append`,
+    {
+      method: "POST",
+      searchParams: {
+        valueInputOption: "USER_ENTERED",
+        insertDataOption: "INSERT_ROWS",
+      },
+      body: JSON.stringify({ values: rows }),
+    }
+  );
+}
+
+// Read all RequiredDocs rows for a transaction id. Returns [] if none.
+export async function readRequiredDocsForTransaction(
+  token: string,
+  spreadsheetId: string,
+  transactionId: string
+) {
+  if (!transactionId) return [];
+  const all = await call<{ values?: string[][] }>(
+    token,
+    `${SHEETS_API}/${spreadsheetId}/values/${REQUIRED_DOCS_SHEET}!A2:F1000`
+  );
+  return (all.values || []).filter(
+    (row) => (row?.[0] || "").trim() === transactionId
+  );
 }
 
 export async function appendTradeRecordRow(

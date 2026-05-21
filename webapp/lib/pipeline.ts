@@ -4,6 +4,7 @@ import {
   createAllDayEvent,
   createGmailDraft,
   driveFolderUrl,
+  ensureRequiredDocsForTransaction,
   findOrCreateCalendar,
   findOrCreateFolder,
   findOrCreateWorkbook,
@@ -11,20 +12,39 @@ import {
   spreadsheetUrl,
   uploadPdfToFolder,
   DEMO_FOLDER_NAME,
+  PROPERTY_TYPE_SUBFOLDERS,
 } from "./google";
 
 export type PipelineResult = {
   transactionId: string;
   side: "buyer" | "seller";
+  propertyType: "residential" | "condo";
   extracted: ExtractedAgreement;
   folderUrl: string;
   subfolderUrl: string;
+  conditionalSubfolderUrl: string;
+  conditionalSubfolderName: string;
   spreadsheetUrl: string;
   pdfUrl: string;
   draftUrl?: string;
   conditionEventId?: string;
   possessionEventId?: string;
 };
+
+// Mirrors Apps Script `trdDetectPropertyType` in
+// C:/VFC/tammy-roundtable-demo/src/AgreementUpload.js. Filename wins, then
+// extracted.summary, then extracted.propertyType, else residential.
+function detectPropertyType(
+  fileName: string,
+  extracted: ExtractedAgreement
+): "residential" | "condo" {
+  const lowerName = (fileName || "").toLowerCase();
+  if (lowerName.includes("condo")) return "condo";
+  const summary = (extracted.summary || "").toLowerCase();
+  if (summary.includes("condo") || summary.includes("condominium")) return "condo";
+  if (extracted.propertyType === "condo") return "condo";
+  return "residential";
+}
 
 function safeFileNameSegment(s: string) {
   return s
@@ -94,8 +114,17 @@ export async function runPipeline(
   );
   const subFolderId = await findOrCreateFolder(accessToken, segment || transactionId, rootFolderId);
 
-  // Per Tammy's May 20, 2026 revisions: agreement PDF lives directly in the transaction folder.
-  // FINTRAC is handled in conveyancing (out of scope here). No nested closing-docs folder.
+  // Per Tammy's May 20, 2026 revisions: agreement PDF lives directly in the
+  // transaction folder. The only nested folder is the conditional one based on
+  // property type (RMS & Photos for residential, Condo Docs for condo).
+  // FINTRAC is handled in conveyancing (out of scope here).
+  const propertyType = detectPropertyType(originalFileName, extracted);
+  const conditionalSubfolderName = PROPERTY_TYPE_SUBFOLDERS[propertyType];
+  const conditionalSubfolderId = await findOrCreateFolder(
+    accessToken,
+    conditionalSubfolderName,
+    subFolderId
+  );
 
   const cleanedName =
     originalFileName ||
@@ -108,6 +137,15 @@ export async function runPipeline(
   );
 
   const workbookId = await findOrCreateWorkbook(accessToken, rootFolderId);
+
+  // Seed / refresh the 6-item RequiredDocs checklist for this transaction.
+  // Mirrors Apps Script `trdEnsureRequiredDocsSheet` + the requiredDocs config
+  // from C:/VFC/tammy-roundtable-demo/src/Config.js (TRD_CONFIG.requiredDocs).
+  try {
+    await ensureRequiredDocsForTransaction(accessToken, workbookId, transactionId);
+  } catch (err) {
+    console.error("RequiredDocs seed failed", err);
+  }
 
   const calendarId = await findOrCreateCalendar(accessToken);
   let conditionEventId: string | undefined;
@@ -172,9 +210,12 @@ export async function runPipeline(
   return {
     transactionId,
     side,
+    propertyType,
     extracted,
     folderUrl: driveFolderUrl(rootFolderId),
     subfolderUrl: driveFolderUrl(subFolderId),
+    conditionalSubfolderUrl: driveFolderUrl(conditionalSubfolderId),
+    conditionalSubfolderName,
     spreadsheetUrl: spreadsheetUrl(workbookId),
     pdfUrl: uploaded.webViewLink,
     draftUrl,
