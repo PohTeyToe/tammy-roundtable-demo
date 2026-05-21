@@ -94,9 +94,8 @@ export async function runPipeline(
   );
   const subFolderId = await findOrCreateFolder(accessToken, segment || transactionId, rootFolderId);
 
-  const closingFolderName = side === "buyer" ? "Buy-side Closing Docs" : "Sell-side Closing Docs";
-  await findOrCreateFolder(accessToken, closingFolderName, subFolderId);
-  const fintracFolderId = await findOrCreateFolder(accessToken, "FINTRAC ID", subFolderId);
+  // Per Tammy's May 20, 2026 revisions: agreement PDF lives directly in the transaction folder.
+  // FINTRAC is handled in conveyancing (out of scope here). No nested closing-docs folder.
 
   const cleanedName =
     originalFileName ||
@@ -169,9 +168,6 @@ export async function runPipeline(
     draftUrl || "",
     extracted.summary,
   ]);
-
-  // Touch fintrac folder to ensure presence and silence unused var.
-  void fintracFolderId;
 
   return {
     transactionId,
