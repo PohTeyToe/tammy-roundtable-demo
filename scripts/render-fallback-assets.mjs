@@ -9,13 +9,14 @@ const projectRoot = path.resolve(__dirname, '..');
 const outputDir = path.join(projectRoot, 'assets', 'fallback', 'generated');
 
 const sample = {
-  transactionId: 'RT-COMP-1001',
+  transactionId: 'MCC-TR-1001',
   buyer1: 'Jordan Patel',
   seller1: 'Maple Retail Holdings Ltd.',
   dealAddress: '1128 4 Street SW, Calgary, AB',
   soldPrice: '$425,000',
   saleDate: '2026-05-19',
   possessionDate: '2026-06-15',
+  conditionDate: '2026-05-19',
   mlsNumber: 'A2145678',
   contractNumber: 'MCC-TR-1001',
   listingRealtor: 'Tammy MacDonald',
@@ -25,27 +26,28 @@ const sample = {
   clientEmail: 'jordan.patel@example.com',
   operatorNotes: 'Seeded fallback sample. Review draft only. Missing condition waiver left visible on purpose.',
   transactionName: 'Jordan Patel - 1128 4 Street SW, Calgary, AB',
+  driveRootName: 'MCC Realtor Workflow Demo',
+  calendarName: 'MCC Realtor Workflow Demo',
+  draftSubject: 'Trade record ready: MCC-TR-1001',
   driveUrl: 'https://drive.google.com/drive/folders/DEMO_FOLDER_ID',
   formUrl: 'https://docs.google.com/forms/d/DEMO_FORM_ID/viewform',
   dashboardStatus: 'Package Generated',
   docsSummary: 'Expected 1 / Received 6 / Missing 1',
   requiredDocs: [
-    ['Accepted Offer', 'Accepted OTP / Offer to Purchase', 'Received'],
+    ['Signed Agreement', 'Exclusive Buyer / Seller Agreement', 'Received'],
+    ['Purchase Contract', 'Purchase Contract & Amendments', 'Received'],
     ['Deposit', 'Deposit Cheque / Proof of Deposit', 'Received'],
-    ['Compliance', 'Area Forms / Consumer Agreement', 'Received'],
-    ['Compliance', 'MLS Copy', 'Received'],
-    ['Lawyers', 'Seller Lawyer Contact', 'Received'],
-    ['Lawyers', 'Buyer Lawyer Contact', 'Received'],
+    ['MLS', 'MLS Listing', 'Received'],
     ['Conditions', 'Condition Waiver / Fulfillment', 'Missing'],
-    ['Closing', 'Transaction Report / Trade Record Review', 'Expected'],
+    ['Closing', 'Trade Record Review', 'Expected'],
   ],
   folderTree: [
-    'RT-COMP-1001 - Jordan Patel - 1128 4 Street SW, Calgary, AB',
+    'MCC-TR-1001 - Jordan Patel - 1128 4 Street SW, Calgary, AB',
     'RMS & Photos',
   ],
   calendarItems: [
-    ['RT-COMP-1001 - Condition Reminder', '2026-05-21', 'Demo reminder for Jordan Patel - 1128 4 Street SW, Calgary, AB'],
-    ['RT-COMP-1001 - Possession Reminder', '2026-06-15', 'Demo possession reminder for Jordan Patel - 1128 4 Street SW, Calgary, AB'],
+    ['MCC-TR-1001 - Condition reminder', '2026-05-19', 'Condition: Financing approval (by 2026-05-19)'],
+    ['MCC-TR-1001 - Possession', '2026-06-15', 'Possession for 1128 4 Street SW, Calgary, AB'],
   ],
 };
 
@@ -212,139 +214,207 @@ function iconDoc() {
 </svg>`;
 }
 
-// ---- 1. Google Forms intake ------------------------------------------------
+// ---- 1. MCC Realtor Workflow dashboard (matches mcc-realtor-app.vercel.app) ----
 
 function renderAgreementUpload() {
   return `
   <style>
-    body { background: #f5f7fb; color: #1f2937; }
-    .au-shell { max-width: 980px; margin: 0 auto; padding: 32px 18px 60px; }
-    .au-bar {
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      background:
+        radial-gradient(circle at 8% -10%, rgba(31, 93, 83, 0.13), transparent 40%),
+        radial-gradient(circle at 95% 10%, rgba(181, 78, 44, 0.06), transparent 35%),
+        linear-gradient(180deg, #f8f2e6 0%, #f4ede0 100%);
+      color: #16140f;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+    .mc-shell { max-width: 1200px; margin: 0 auto; padding: 28px 36px 56px; }
+
+    .mc-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4px 18px; border-bottom: 1px solid #e2e6ed; margin-bottom: 26px;
+      padding-bottom: 20px; border-bottom: 1px solid #d8cdb9;
     }
-    .au-brand { display: flex; align-items: center; gap: 12px; }
-    .au-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: #1f5d53; }
-    .au-brand-text { font-weight: 600; font-size: 15px; color: #16140f; }
-    .au-step { font-size: 12px; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; }
-    .au-h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 6px; color: #16140f; }
-    .au-sub { color: #5f6b78; font-size: 15px; margin: 0 0 24px; max-width: 620px; line-height: 1.5; }
-    .au-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
-    .au-card {
-      background: #fff; border: 1px solid #e2e6ed; border-radius: 14px; padding: 22px 22px 20px;
-      box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+    .mc-brand { display: flex; align-items: center; gap: 14px; }
+    .mc-tile {
+      width: 38px; height: 38px; border-radius: 8px; background: #1f5d53; color: #f6fffb;
+      display: grid; place-items: center; font-family: "Inter", sans-serif;
+      font-weight: 700; font-size: 12px; letter-spacing: 0.02em;
     }
-    .au-card h3 { font-size: 14px; color: #6b7280; margin: 0 0 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
-    .au-drop {
-      border: 2px dashed #1f5d53; border-radius: 12px; padding: 18px;
-      background: #eaf5f1; display: flex; align-items: center; gap: 14px;
+    .mc-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .mc-brand-text .eyebrow {
+      font-family: "Inter", sans-serif;
+      font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #8a8175;
     }
-    .au-drop .pdf-icon {
-      width: 44px; height: 56px; flex-shrink: 0; border-radius: 6px;
-      background: linear-gradient(135deg, #d93025 0%, #b8261c 100%); color: #fff;
-      display: grid; place-items: center; font-weight: 700; font-size: 12px;
-      box-shadow: 0 2px 6px rgba(217,48,37,0.25);
+    .mc-brand-text .name {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 22px; font-weight: 600; letter-spacing: -0.01em;
+      color: #16140f; margin-top: 2px;
     }
-    .au-drop .fname { font-size: 15px; font-weight: 600; color: #16140f; margin: 0 0 4px; line-height: 1.3; }
-    .au-drop .fmeta { font-size: 12px; color: #5f6b78; }
-    .au-drop .signed-pill {
-      display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
-      background: #d8f3dc; color: #1b4332; border-radius: 999px; font-size: 11px; font-weight: 600;
-      margin-top: 6px;
+    .mc-nav { display: flex; align-items: center; gap: 26px; font-size: 14px; }
+    .mc-nav-item {
+      display: inline-flex; align-items: center; gap: 7px; color: #3d3933;
     }
-    .au-drop .signed-pill::before { content: "✓"; font-size: 11px; }
-    .au-divider { height: 1px; background: #e2e6ed; margin: 18px 0; }
-    .au-detected {
-      display: grid; gap: 10px;
+    .mc-nav-item .ico {
+      width: 16px; height: 16px; display: inline-grid; place-items: center;
+      color: #5f574d;
     }
-    .au-row {
-      display: grid; grid-template-columns: 140px 1fr; gap: 14px;
-      font-size: 13.5px; padding: 6px 0;
+    .mc-user { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; margin-left: 10px; }
+    .mc-user .nm { font-weight: 600; font-size: 14px; color: #16140f; }
+    .mc-user .em { font-size: 12px; color: #8a8175; margin-top: 1px; }
+    .mc-signout {
+      padding: 7px 14px; border: 1px solid #d8cdb9; border-radius: 999px;
+      font-size: 13px; color: #3d3933; background: #fffaf1; margin-left: 14px;
     }
-    .au-row .k { color: #6b7280; font-weight: 500; }
-    .au-row .v { color: #16140f; font-weight: 500; }
-    .au-row .v.tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 2px 9px; background: #e1efe8; color: #1f5d53;
-      border-radius: 6px; font-size: 12px; width: fit-content;
+
+    .mc-main {
+      display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;
+      padding-top: 44px; align-items: start;
     }
-    .au-actions { display: flex; gap: 10px; margin-top: 18px; }
-    .au-btn {
-      padding: 10px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
-      background: #1f5d53; color: #fff; box-shadow: 0 1px 2px rgba(31,93,83,0.25);
+    .mc-left .eyebrow {
+      font-family: "Inter", sans-serif; font-size: 11px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #8a8175; margin: 0 0 14px;
     }
-    .au-btn.ghost { background: #fff; color: #16140f; border: 1px solid #d8dde4; box-shadow: none; }
-    .au-flow {
-      display: flex; flex-direction: column; gap: 10px;
+    .mc-h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 44px; font-weight: 600; line-height: 1.08;
+      letter-spacing: -0.02em; color: #16140f;
+      margin: 0 0 18px; max-width: 17ch;
     }
-    .au-flow-step {
-      display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start;
-      padding: 10px 0;
+    .mc-lede {
+      font-size: 15.5px; line-height: 1.55; color: #3d3933;
+      max-width: 56ch; margin: 0;
     }
-    .au-flow-step .marker {
-      width: 24px; height: 24px; border-radius: 50%; background: #d8f3dc; color: #1b4332;
-      display: grid; place-items: center; font-size: 13px; font-weight: 700; margin-top: 1px;
+    .mc-tx-card {
+      margin-top: 40px;
+      background: #fffaf1; border: 1px solid #d8cdb9; border-radius: 18px;
+      padding: 24px 26px;
+      box-shadow: 0 14px 38px rgba(38, 31, 24, 0.06);
     }
-    .au-flow-step.pending .marker { background: #f1f4f8; color: #9aa3ad; }
-    .au-flow-step .step-title { font-size: 14px; color: #16140f; font-weight: 600; margin: 0 0 2px; line-height: 1.3; }
-    .au-flow-step .step-sub { font-size: 12.5px; color: #5f6b78; line-height: 1.4; margin: 0; }
-    .au-foot { font-size: 12px; color: #8a8e94; padding-top: 18px; }
+    .mc-tx-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 16px; border-bottom: 1px dashed #d8cdb9; margin-bottom: 18px;
+    }
+    .mc-tx-eyebrow {
+      font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a8175;
+    }
+    .mc-tx-title {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 22px; font-weight: 600; letter-spacing: -0.01em; margin: 6px 0 0; color: #16140f;
+    }
+    .mc-tx-sample {
+      padding: 9px 16px; border-radius: 999px;
+      border: 1px solid #1f5d53; color: #1f5d53; font-size: 13px; font-weight: 500;
+      background: #fffaf1; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .mc-tx-sample::before { content: "\\25B6"; font-size: 9px; }
+    .mc-drop {
+      border: 1.5px dashed #b6a98a; border-radius: 14px;
+      padding: 38px 22px; text-align: center;
+      background: rgba(255, 253, 247, 0.5);
+    }
+    .mc-drop .pdf {
+      display: inline-flex; align-items: center; gap: 10px; color: #5f574d;
+      font-size: 14px;
+    }
+    .mc-drop .pdf-glyph {
+      width: 38px; height: 48px; border-radius: 5px;
+      background: linear-gradient(135deg, #1f5d53 0%, #163f39 100%); color: #f6fffb;
+      display: grid; place-items: center; font-weight: 700; font-size: 11px;
+    }
+    .mc-drop p {
+      margin: 14px 0 4px; font-size: 15px; color: #16140f; font-weight: 500;
+    }
+    .mc-drop small { font-size: 12.5px; color: #8a8175; }
+
+    .mc-side {
+      background: #fffaf1; border: 1px solid #d8cdb9; border-radius: 22px;
+      padding: 24px 26px;
+      box-shadow: 0 14px 38px rgba(38, 31, 24, 0.07);
+    }
+    .mc-side .eyebrow {
+      font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: #8a8175; margin: 0 0 18px;
+    }
+    .mc-side-row { display: grid; grid-template-columns: 28px 1fr; gap: 14px; padding: 12px 0; align-items: start; }
+    .mc-side-row + .mc-side-row { border-top: 1px dotted #d8cdb9; }
+    .mc-side-row .ico {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: #e7efe9; color: #1f5d53; display: grid; place-items: center;
+      font-size: 14px;
+    }
+    .mc-side-row .label { font-size: 12px; color: #8a8175; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 2px; }
+    .mc-side-row .val { font-size: 15px; color: #16140f; font-weight: 500; margin: 0; line-height: 1.35; }
+    .mc-side-rule { height: 1px; background: #d8cdb9; margin: 18px 0 14px; opacity: 0.6; }
+    .mc-side-foot {
+      font-size: 12.5px; color: #5f574d; line-height: 1.5; margin: 0;
+    }
+    .mc-side-foot em { font-style: italic; color: #1f5d53; }
   </style>
-  <div class="au-shell">
-    <div class="au-bar">
-      <div class="au-brand">
-        <span class="dot"></span>
-        <span class="au-brand-text">Realtor Workflow</span>
+  <div class="mc-shell">
+    <header class="mc-header">
+      <div class="mc-brand">
+        <div class="mc-tile">MCC</div>
+        <div class="mc-brand-text">
+          <span class="eyebrow">Maxwell Canyon Creek</span>
+          <span class="name">Realtor Workflow</span>
+        </div>
       </div>
-      <span class="au-step">Step 1 of 5 / Upload signed agreement</span>
-    </div>
+      <nav class="mc-nav">
+        <span class="mc-nav-item"><span class="ico">&#x25A4;</span>Trade record</span>
+        <span class="mc-nav-item"><span class="ico">&#x25A2;</span>Drive folder</span>
+        <div class="mc-user">
+          <span class="nm">Tammy MacDonald</span>
+          <span class="em">tammymacdonald@telus.net</span>
+        </div>
+        <span class="mc-signout">Sign out</span>
+      </nav>
+    </header>
 
-    <h1 class="au-h1">Upload your signed DocuSign agreement.</h1>
-    <p class="au-sub">Drop the executed Exclusive Buyer Agreement or Exclusive Seller Agreement. The system reads it, creates the Drive folder, and seeds the trade record from the agreement fields.</p>
+    <div class="mc-main">
+      <section class="mc-left">
+        <p class="eyebrow">Workspace</p>
+        <h1 class="mc-h1">File a new transaction or review what you have.</h1>
+        <p class="mc-lede">The pipeline lands the deal in your Drive, seeds the row in your trade record, sets the reminders, and drafts the follow-up email. About thirty to sixty seconds end to end.</p>
 
-    <div class="au-grid">
-      <div class="au-card">
-        <h3>Uploaded agreement</h3>
-        <div class="au-drop">
-          <div class="pdf-icon">PDF</div>
-          <div>
-            <p class="fname">Exclusive Buyer Agreement - Jordan Patel.pdf</p>
-            <div class="fmeta">408 KB / signed via DocuSign</div>
-            <div class="signed-pill">All parties signed</div>
+        <div class="mc-tx-card">
+          <div class="mc-tx-head">
+            <div>
+              <span class="mc-tx-eyebrow">New transaction</span>
+              <h2 class="mc-tx-title">Drop a signed agreement</h2>
+            </div>
+            <span class="mc-tx-sample">Try the sample agreement</span>
+          </div>
+          <div class="mc-drop">
+            <div class="pdf">
+              <span class="pdf-glyph">PDF</span>
+            </div>
+            <p>Click or drop a signed buyer or seller agreement</p>
+            <small>Demo data only. No real FINTRAC documents.</small>
           </div>
         </div>
+      </section>
 
-        <div class="au-divider"></div>
-
-        <h3>Detected from the agreement</h3>
-        <div class="au-detected">
-          <div class="au-row"><span class="k">Agreement type</span><span class="v tag">Buyer-side</span></div>
-          <div class="au-row"><span class="k">Buyer</span><span class="v">${escapeHtml(sample.buyer1)}</span></div>
-          <div class="au-row"><span class="k">Seller</span><span class="v">${escapeHtml(sample.seller1)}</span></div>
-          <div class="au-row"><span class="k">Property</span><span class="v">${escapeHtml(sample.dealAddress)}</span></div>
-          <div class="au-row"><span class="k">Sold price</span><span class="v">${escapeHtml(sample.soldPrice)}</span></div>
-          <div class="au-row"><span class="k">Possession date</span><span class="v">${escapeHtml(sample.possessionDate)}</span></div>
-          <div class="au-row"><span class="k">MLS number</span><span class="v">${escapeHtml(sample.mlsNumber)}</span></div>
-          <div class="au-row"><span class="k">Listing realtor</span><span class="v">${escapeHtml(sample.listingRealtor)}</span></div>
+      <aside class="mc-side">
+        <p class="eyebrow">Your demo workspace</p>
+        <div class="mc-side-row">
+          <span class="ico">&#x25A2;</span>
+          <div>
+            <p class="label">Drive folder</p>
+            <p class="val">${escapeHtml(sample.driveRootName)}</p>
+          </div>
         </div>
-
-        <div class="au-actions">
-          <div class="au-btn">Create folder + start trade record</div>
-          <div class="au-btn ghost">Re-upload</div>
+        <div class="mc-side-row">
+          <span class="ico">&#x25A4;</span>
+          <div>
+            <p class="label">Trade record sheet</p>
+            <p class="val">Live, in your Drive</p>
+          </div>
         </div>
-      </div>
-
-      <div class="au-card">
-        <h3>What happens next</h3>
-        <div class="au-flow">
-          <div class="au-flow-step"><div class="marker">✓</div><div><p class="step-title">Agreement parsed</p><p class="step-sub">Buyer-side detected. Eight fields extracted with the source filename preserved.</p></div></div>
-          <div class="au-flow-step pending"><div class="marker">2</div><div><p class="step-title">Drive folder created</p><p class="step-sub">Named after the transaction with your existing subfolder taxonomy.</p></div></div>
-          <div class="au-flow-step pending"><div class="marker">3</div><div><p class="step-title">Trade record seeded</p><p class="step-sub">Row appears in the CRM workbook with the validation checklist at the bottom.</p></div></div>
-          <div class="au-flow-step pending"><div class="marker">4</div><div><p class="step-title">Calendar reminders</p><p class="step-sub">Condition waiver and possession dates land on the calendar.</p></div></div>
-          <div class="au-flow-step pending"><div class="marker">5</div><div><p class="step-title">Gmail draft staged</p><p class="step-sub">Client follow-up sits as a draft. Stays a draft until you send it.</p></div></div>
-        </div>
-        <p class="au-foot">Drafts never auto-send. Apps Script runs against a test Google account.</p>
-      </div>
+        <div class="mc-side-rule"></div>
+        <p class="mc-side-foot">Everything stays in <em>your</em> Google. We never read it.</p>
+      </aside>
     </div>
   </div>
   `;
@@ -479,7 +549,7 @@ function renderIntakeForm_unused() {
           <svg viewBox="0 0 24 24" fill="#1a73e8" xmlns="http://www.w3.org/2000/svg"><path d="M16.5 6v11.5a4.5 4.5 0 0 1-9 0V5a3 3 0 1 1 6 0v10.5a1.5 1.5 0 0 1-3 0V6H10v9.5a3 3 0 0 0 6 0V5a4.5 4.5 0 0 0-9 0v12.5a6 6 0 0 0 12 0V6h-2.5z"/></svg>
         </div>
         <div class="gf-upload-text">
-          <div class="fname">accepted-offer-RT-COMP-1001.pdf</div>
+          <div class="fname">accepted-offer-MCC-TR-1001.pdf</div>
           <div class="meta">412 KB</div>
         </div>
       </div>
@@ -501,11 +571,11 @@ function renderFolderTree() {
   const dirItems = [
     { name: 'RMS & Photos', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
     { name: 'Exclusive Buyer Agreement - Jordan Patel.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
-    { name: 'Residential Purchase Contract - RT-COMP-1001.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'Residential Purchase Contract - MCC-TR-1001.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
     { name: 'Deposit Cheque - $25,000.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
     { name: 'Condition Waiver - Financing.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
     { name: 'MLS Listing A2145678.pdf', kind: 'doc', owner: 'me', modified: 'May 18, 2026' },
-    { name: 'Trade Record Summary - RT-COMP-1001.gsheet', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'Trade Record Summary - MCC-TR-1001.gsheet', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
   ];
 
   const makeTile = (it) => `
@@ -688,11 +758,10 @@ function renderCalendar() {
 
   const dayColsHtml = days.map((d, idx) => {
     let event = '';
-    if (d.d === 21) {
-      // Condition reminder at 10am - 11am, hour rows start at 7am so row index 3
-      event = `<div class="gc-event" style="top: ${(10 - 7) * 56 + 4}px; height: ${56 - 8}px;">
-        <div class="gc-event-title">10 - 11 AM</div>
-        <div class="gc-event-sub">RT-COMP-1001 - Condition Reminder</div>
+    if (d.d === 19) {
+      // Condition reminder all-day on Tuesday May 19 (matches webapp createAllDayEvent)
+      event = `<div class="gc-event" style="top: 4px; height: 28px;">
+        <div class="gc-event-title">MCC-TR-1001 - Condition reminder</div>
       </div>`;
     }
     return `<div class="gc-day-col">${event}<div class="gc-grid-lines">${hours.map(() => '<div class="gc-row"></div>').join('')}</div></div>`;
@@ -1136,7 +1205,7 @@ function renderRequiredDocs() {
       notesByName[name] || '',
       datesByName[name] || '',
       'Tammy MacDonald',
-      status === 'Received' ? 'drive://RT-COMP-1001/' : '',
+      status === 'Received' ? 'drive://MCC-TR-1001/' : '',
     ];
   });
   const grid = sheetGrid({ columns, rows });
@@ -1165,7 +1234,7 @@ function renderDashboard() {
 // ---- 6. Gmail compose -------------------------------------------------------
 
 function renderDraftPreview() {
-  const subject = `[Review Draft] Next steps for ${sample.dealAddress}`;
+  const subject = sample.draftSubject;
   const body = `Hi ${sample.buyer1},
 
 Following up on the next steps for ${sample.dealAddress}.
@@ -1302,11 +1371,11 @@ Maxwell Canyon Creek`;
         </div>
       </aside>
       <main class="gm-main">
-        <div class="gm-listrow unread"><div class="from">Maxwell Canyon Creek</div><div class="subj">[Review Draft] Next steps for 1128 4 Street SW, Calgary, AB</div><div class="date">10:42 AM</div></div>
-        <div class="gm-listrow"><div class="from">Ava Singh</div><div class="subj">Re: RT-COMP-1001 selling-side handoff</div><div class="date">9:15 AM</div></div>
+        <div class="gm-listrow unread"><div class="from">Maxwell Canyon Creek</div><div class="subj">${escapeHtml(sample.draftSubject)}</div><div class="date">10:42 AM</div></div>
+        <div class="gm-listrow"><div class="from">Ava Singh</div><div class="subj">Re: MCC-TR-1001 selling-side handoff</div><div class="date">9:15 AM</div></div>
         <div class="gm-listrow"><div class="from">Summit Legal</div><div class="subj">Confirming buyer-side file for Jordan Patel</div><div class="date">May 19</div></div>
         <div class="gm-listrow"><div class="from">Jordan & Co. Law</div><div class="subj">Seller-side closing checklist</div><div class="date">May 19</div></div>
-        <div class="gm-listrow"><div class="from">Google Calendar</div><div class="subj">Reminder: RT-COMP-1001 - Condition Reminder May 21</div><div class="date">May 18</div></div>
+        <div class="gm-listrow"><div class="from">Google Calendar</div><div class="subj">Reminder: MCC-TR-1001 - Condition reminder May 19</div><div class="date">May 18</div></div>
       </main>
     </div>
 

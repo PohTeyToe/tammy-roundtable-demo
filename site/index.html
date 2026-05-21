@@ -674,11 +674,11 @@
         <h1>When a Realtor closes a deal, <span class="accent">five things</span> should happen on their own.</h1>
         <p class="lede">Built for the realtor roundtable. Step 1 is uploading the signed DocuSign agreement. From there the Drive folder, trade record, calendar reminders, and Gmail draft all set themselves up. The validation checklist at the bottom of the trade record is the Realtor anchor.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="https://script.google.com/macros/s/AKfycbxfpkajcnTy9PhRzlBfAbi8pjUZG2AADbVFH3BzYBvDATNnd2-GBE8-UVGz4HF8iuBq_g/exec" target="_blank" rel="noopener">Try it live</a>
+          <a class="btn btn-primary" href="https://mcc-realtor-app.vercel.app/" target="_blank" rel="noopener">Try it live</a>
           <button class="btn btn-ghost" id="playBtn">Watch the flow</button>
           <a class="btn btn-ghost" href="packet/">Open the full packet</a>
         </div>
-        <p class="live-note">"Try it live" opens the real Apps Script web app. Drop a signed Buyer or Seller Agreement PDF and the pipeline runs end-to-end against a test Google account: Drive folder, Sheets row, calendar reminders, and a Gmail draft.</p>
+        <p class="live-note">"Try it live" opens the working Realtor Workflow web app. Sign in with Google, drop a signed Buyer or Seller Agreement PDF, and the pipeline runs end-to-end in your own Drive: client folder, trade record row, calendar reminders, and a Gmail draft. Nothing sends.</p>
       </div>
 
       <aside class="tcard">
@@ -686,7 +686,7 @@
           <span>Transaction in view</span>
           <span class="status">Demo data live</span>
         </div>
-        <div class="tcard-row"><span class="k">Transaction ID</span><span class="v">RT-COMP-1001</span></div>
+        <div class="tcard-row"><span class="k">Transaction ID</span><span class="v">MCC-TR-1001</span></div>
         <div class="tcard-row"><span class="k">Buyer</span><span class="v">Jordan Patel</span></div>
         <div class="tcard-row"><span class="k">Seller</span><span class="v">Maple Retail Holdings Ltd.</span></div>
         <div class="tcard-row"><span class="k">Property</span><span class="v">1128 4 Street SW, Calgary</span></div>
@@ -709,31 +709,31 @@
 
       <div class="flow-body">
         <ol class="step-list" id="stepList">
-          <li class="step-item active" data-step="1" data-asset="assets/fallback/generated/agreement-upload.png" data-url="workflow.realtor/upload/RT-COMP-1001">
+          <li class="step-item active" data-step="1" data-asset="assets/fallback/generated/agreement-upload.png" data-url="mcc-realtor-app.vercel.app/dashboard">
             <span class="step-num">01</span>
             <div class="step-meta">
               <span class="step-title">Signed agreement</span>
               <span class="step-sub">Realtor uploads the signed DocuSign agreement (Exclusive Buyer or Seller). The system reads it and starts the flow.</span>
-              <span class="step-tool">DocuSign &rarr; Apps Script</span>
+              <span class="step-tool">DocuSign &rarr; Realtor Workflow</span>
             </div>
           </li>
-          <li class="step-item" data-step="2" data-asset="assets/fallback/generated/folder-tree.png" data-url="drive.google.com/drive/folders/DEMO_FOLDER_ID">
+          <li class="step-item" data-step="2" data-asset="assets/fallback/generated/folder-tree.png" data-url="drive.google.com/drive/folders/MCC-Realtor-Workflow-Demo">
             <span class="step-num">02</span>
             <div class="step-meta">
               <span class="step-title">Drive folder</span>
               <span class="step-sub">A client folder is created with the trade taxonomy you already use.</span>
-              <span class="step-tool">Apps Script &rarr; Drive</span>
+              <span class="step-tool">Realtor Workflow &rarr; Drive</span>
             </div>
           </li>
-          <li class="step-item" data-step="3" data-asset="assets/fallback/generated/calendar.png" data-url="calendar.google.com/calendar/u/0/r/eventedit/RT-COMP-1001-CONDITIONS">
+          <li class="step-item" data-step="3" data-asset="assets/fallback/generated/calendar.png" data-url="calendar.google.com/calendar/u/0/r/eventedit/MCC-TR-1001-CONDITIONS">
             <span class="step-num">03</span>
             <div class="step-meta">
               <span class="step-title">Calendar reminders</span>
-              <span class="step-sub">Condition waiver and possession reminders land on the calendar.</span>
-              <span class="step-tool">Apps Script &rarr; Calendar</span>
+              <span class="step-sub">Condition reminder and possession date land on the calendar.</span>
+              <span class="step-tool">Realtor Workflow &rarr; Calendar</span>
             </div>
           </li>
-          <li class="step-item" data-step="4" data-asset="assets/fallback/generated/trade-record.png" data-url="docs.google.com/spreadsheets/d/RT-COMP-1001/edit#gid=trade">
+          <li class="step-item" data-step="4" data-asset="assets/fallback/generated/trade-record.png" data-url="docs.google.com/spreadsheets/d/MCC-TR-1001/edit#gid=trade">
             <span class="step-num">04</span>
             <div class="step-meta">
               <span class="step-title">Trade record + checklist</span>
@@ -741,7 +741,7 @@
               <span class="step-tool">Claude &rarr; Sheets</span>
             </div>
           </li>
-          <li class="step-item" data-step="5" data-asset="assets/fallback/generated/draft-preview.png" data-url="mail.google.com/mail/u/0/#drafts/RT-COMP-1001">
+          <li class="step-item" data-step="5" data-asset="assets/fallback/generated/draft-preview.png" data-url="mail.google.com/mail/u/0/#drafts/MCC-TR-1001">
             <span class="step-num">05</span>
             <div class="step-meta">
               <span class="step-title">Draft email</span>
@@ -755,7 +755,7 @@
           <div class="stage-frame" id="stageFrame">
             <div class="browser-bar">
               <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
-              <div class="url" id="stageUrl">workflow.realtor/upload/RT-COMP-1001</div>
+              <div class="url" id="stageUrl">mcc-realtor-app.vercel.app/dashboard</div>
             </div>
             <div class="img-wrap">
               <img id="stageImg" src="assets/fallback/generated/agreement-upload.png" alt="Step preview">
@@ -764,9 +764,9 @@
           </div>
           <div class="stage-caption">
             <p class="stage-caption-text" id="stageCaption">Realtor uploads the signed DocuSign agreement (Exclusive Buyer or Seller). The system reads it and starts the flow.</p>
-            <span class="stage-caption-meta" id="stageMeta">Step 01 / DocuSign &rarr; Apps Script</span>
+            <span class="stage-caption-meta" id="stageMeta">Step 01 / DocuSign &rarr; Realtor Workflow</span>
           </div>
-          <a id="stage-cta" class="step-cta" href="https://script.google.com/macros/s/AKfycbxfpkajcnTy9PhRzlBfAbi8pjUZG2AADbVFH3BzYBvDATNnd2-GBE8-UVGz4HF8iuBq_g/exec" target="_blank" rel="noopener" style="display:inline-flex">
+          <a id="stage-cta" class="step-cta" href="https://mcc-realtor-app.vercel.app/" target="_blank" rel="noopener" style="display:inline-flex">
             Try the live upload &rarr;
           </a>
         </div>
@@ -781,7 +781,7 @@
         <h3>What actually runs</h3>
         <ul>
           <li>Realtor uploads the signed DocuSign agreement (Exclusive Buyer or Seller).</li>
-          <li>Apps Script detects buyer or seller side and creates the Drive folder.</li>
+          <li>Realtor Workflow detects buyer or seller side and creates the Drive folder.</li>
           <li>Claude extracts the trade record fields from the agreement and writes the row.</li>
           <li>The trade record carries the Realtor validation checklist at the bottom.</li>
           <li>Calendar reminders cover condition waiver and possession. Gmail draft is staged.</li>
@@ -804,9 +804,9 @@
       <h2>The shape of the transaction</h2>
       <p class="sub">Sample data used through every step. Picked to look like a real Calgary commercial deal without being one.</p>
       <div class="detail-grid">
-        <div class="detail-tile"><div class="label">Transaction</div><div class="val">RT-COMP-1001</div></div>
+        <div class="detail-tile"><div class="label">Transaction</div><div class="val">MCC-TR-1001</div></div>
         <div class="detail-tile"><div class="label">MLS number</div><div class="val">A2145678</div></div>
-        <div class="detail-tile"><div class="label">Contract</div><div class="val">MCC-TR-1001</div></div>
+        <div class="detail-tile"><div class="label">Side</div><div class="val">Buyer</div></div>
         <div class="detail-tile"><div class="label">Sale date</div><div class="val">2026-05-19</div></div>
         <div class="detail-tile"><div class="label">Possession</div><div class="val">2026-06-15</div></div>
         <div class="detail-tile"><div class="label">Selling realtor</div><div class="val">Ava Singh</div></div>
