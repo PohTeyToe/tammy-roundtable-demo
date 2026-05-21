@@ -1,26 +1,212 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  Maxwell Canyon Creek - Realtor Workflow
+  Editorial brokerage instrument. Paper-and-ink palette in OKLCH.
+  Restrained color, serif headlines, sans body, mono for IDs.
+*/
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* Paper / surface tones, tinted toward warm parchment */
+  --paper:        oklch(0.965 0.012 85);   /* main app surface */
+  --paper-2:      oklch(0.985 0.010 85);   /* raised card */
+  --paper-3:      oklch(0.945 0.014 85);   /* recessed / dropzone */
+  --rule:         oklch(0.890 0.012 80);   /* hairline borders */
+  --rule-strong:  oklch(0.820 0.014 75);
+
+  /* Ink scale */
+  --ink:          oklch(0.205 0.008 60);   /* primary text */
+  --ink-2:        oklch(0.355 0.008 60);   /* secondary */
+  --ink-3:        oklch(0.510 0.010 60);   /* tertiary, meta */
+  --ink-4:        oklch(0.665 0.012 65);   /* placeholder, hint */
+
+  /* Brand accent: muted forest green */
+  --accent:       oklch(0.385 0.060 155);
+  --accent-hover: oklch(0.345 0.062 155);
+  --accent-soft:  oklch(0.945 0.024 150);  /* accent wash for selections */
+  --accent-ink:   oklch(0.975 0.005 90);   /* text on accent */
+
+  /* Buyer / seller side tags */
+  --buyer:        oklch(0.395 0.058 155);
+  --seller:       oklch(0.450 0.080 45);   /* warm earth */
+
+  /* Semantic states */
+  --danger:       oklch(0.470 0.150 25);
+  --danger-soft:  oklch(0.955 0.030 25);
+  --warning:      oklch(0.550 0.130 75);
+  --success:      oklch(0.490 0.080 145);
+
+  /* Type */
+  --font-serif: "Source Serif 4", "Source Serif Pro", "Iowan Old Style",
+                "Apple Garamond", Georgia, "Times New Roman", serif;
+  --font-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                system-ui, sans-serif;
+  --font-mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+                Menlo, Consolas, monospace;
+
+  /* Shadows: soft, tinted with ink */
+  --shadow-1: 0 1px 2px oklch(0.205 0.008 60 / 0.05),
+              0 1px 1px oklch(0.205 0.008 60 / 0.04);
+  --shadow-2: 0 8px 24px oklch(0.205 0.008 60 / 0.06),
+              0 2px 6px oklch(0.205 0.008 60 / 0.04);
+  --shadow-3: 0 24px 48px oklch(0.205 0.008 60 / 0.10),
+              0 4px 12px oklch(0.205 0.008 60 / 0.06);
+
+  /* Focus ring */
+  --ring: 0 0 0 3px oklch(0.385 0.060 155 / 0.30);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper:        oklch(0.165 0.008 70);
+    --paper-2:      oklch(0.205 0.010 70);
+    --paper-3:      oklch(0.230 0.012 70);
+    --rule:         oklch(0.305 0.012 70);
+    --rule-strong:  oklch(0.380 0.014 70);
+    --ink:          oklch(0.945 0.008 80);
+    --ink-2:        oklch(0.820 0.010 80);
+    --ink-3:        oklch(0.660 0.012 80);
+    --ink-4:        oklch(0.510 0.014 80);
+    --accent:       oklch(0.640 0.085 155);
+    --accent-hover: oklch(0.690 0.090 155);
+    --accent-soft:  oklch(0.270 0.040 155);
+    --accent-ink:   oklch(0.110 0.006 80);
+    --buyer:        oklch(0.640 0.085 155);
+    --seller:       oklch(0.660 0.100 50);
+    --danger:       oklch(0.700 0.140 25);
+    --danger-soft:  oklch(0.260 0.050 25);
+    --warning:      oklch(0.720 0.120 80);
+    --success:      oklch(0.680 0.080 145);
+    --shadow-1: 0 1px 2px oklch(0 0 0 / 0.25);
+    --shadow-2: 0 8px 24px oklch(0 0 0 / 0.35);
+    --shadow-3: 0 24px 48px oklch(0 0 0 / 0.45);
+    --ring: 0 0 0 3px oklch(0.640 0.085 155 / 0.40);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-buyer: var(--buyer);
+  --color-seller: var(--seller);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection respects brand */
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* Focus: visible, branded, no ugly default */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: 4px;
+}
+
+/* Tabular numerals everywhere data lives */
+.nums-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle paper grain on the main app background */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image:
+    radial-gradient(oklch(0.205 0.008 60 / 0.025) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+@media (prefers-color-scheme: dark) {
+  .paper-grain::before {
+    opacity: 0.25;
+    background-image:
+      radial-gradient(oklch(0.945 0.008 80 / 0.02) 1px, transparent 1px);
+    mix-blend-mode: screen;
+  }
+}
+
+/* Loading shimmer for pipeline progress chips */
+@keyframes shimmer {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+.shimmer {
+  animation: shimmer 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+/* Quill stroke divider used between sections */
+.stroke-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--rule-strong) 20%,
+    var(--rule-strong) 80%,
+    transparent
+  );
+}
+
+/* Pipeline step indicator: vertical rail */
+.step-rail {
+  background: linear-gradient(
+    to bottom,
+    var(--rule) 0%,
+    var(--rule) 100%
+  );
+}
+
+/* Smooth, calm transitions on interactive surfaces */
+.transition-calm {
+  transition-property: background-color, border-color, color, opacity, transform, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Prevent overscroll glow on PDF dropzone interactions */
+html, body { overscroll-behavior: contain; }
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
