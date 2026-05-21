@@ -150,12 +150,37 @@ export default async function Home() {
 
 function Crest() {
   return (
-    <span
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
       aria-hidden="true"
-      className="inline-flex w-8 h-8 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[14.5px] leading-none tracking-[0.02em] pb-[1px]"
+      className="text-accent"
     >
-      MCC
-    </span>
+      <rect
+        x="1"
+        y="1"
+        width="30"
+        height="30"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        fill="none"
+      />
+      <text
+        x="16"
+        y="21"
+        textAnchor="middle"
+        fontFamily="'Source Serif 4', 'Source Serif Pro', Georgia, serif"
+        fontSize="11"
+        fontWeight="500"
+        letterSpacing="0.4"
+        fill="currentColor"
+      >
+        MCC
+      </text>
+    </svg>
   );
 }
 
