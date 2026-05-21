@@ -41,15 +41,7 @@ const sample = {
   ],
   folderTree: [
     'RT-COMP-1001 - Jordan Patel - 1128 4 Street SW, Calgary, AB',
-    '01 - Signed Agreement',
-    '02 - FINTRAC',
-    '03 - Purchase Contract & Amendments',
-    '04 - Deposit',
-    '05 - Condition Documents',
-    '06 - Lawyer Correspondence',
-    '07 - MLS & Listing Docs',
-    '08 - Possession & Keys',
-    '09 - Trade Record',
+    'RMS & Photos',
   ],
   calendarItems: [
     ['RT-COMP-1001 - Condition Reminder', '2026-05-21', 'Demo reminder for Jordan Patel - 1128 4 Street SW, Calgary, AB'],
@@ -505,29 +497,25 @@ function renderIntakeForm_unused() {
 // ---- 2. Google Drive folder tree -------------------------------------------
 
 function renderFolderTree() {
-  const children = sample.folderTree.slice(1);
-  const folders = children.filter((c) => c.includes('Folder') && !c.includes('/')).concat(['Initial Prospect Folder']).filter((v, i, a) => a.indexOf(v) === i);
   // Build a flat list of "items in this directory" mimic
   const dirItems = [
-    { name: '01 - Signed Agreement', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '02 - FINTRAC', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '03 - Purchase Contract & Amendments', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '04 - Deposit', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '05 - Condition Documents', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '06 - Lawyer Correspondence', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '07 - MLS & Listing Docs', kind: 'folder', owner: 'me', modified: 'May 18, 2026' },
-    { name: '08 - Possession & Keys', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
-    { name: '09 - Trade Record', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'RMS & Photos', kind: 'folder', owner: 'me', modified: 'May 19, 2026' },
     { name: 'Exclusive Buyer Agreement - Jordan Patel.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
-    { name: 'trade-record-summary.gsheet', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'Residential Purchase Contract - RT-COMP-1001.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'Deposit Cheque - $25,000.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'Condition Waiver - Financing.pdf', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
+    { name: 'MLS Listing A2145678.pdf', kind: 'doc', owner: 'me', modified: 'May 18, 2026' },
+    { name: 'Trade Record Summary - RT-COMP-1001.gsheet', kind: 'doc', owner: 'me', modified: 'May 19, 2026' },
   ];
 
-  const tileHtml = dirItems.map((it) => `
+  const makeTile = (it) => `
     <div class="gd-tile">
       <div class="gd-tile-icon">${it.kind === 'folder' ? iconFolderDrive() : iconDoc()}</div>
       <div class="gd-tile-name">${escapeHtml(it.name)}</div>
     </div>
-  `).join('');
+  `;
+  const folderTiles = dirItems.filter((it) => it.kind === 'folder').map(makeTile).join('');
+  const fileTiles = dirItems.filter((it) => it.kind === 'doc').map(makeTile).join('');
 
   return `
   <style>
@@ -670,7 +658,9 @@ function renderFolderTree() {
           <div class="gd-chip">Modified &nbsp;&#x25BE;</div>
         </div>
         <div class="gd-section">Folders</div>
-        <div class="gd-grid">${tileHtml}</div>
+        <div class="gd-grid">${folderTiles}</div>
+        <div class="gd-section">Files</div>
+        <div class="gd-grid">${fileTiles}</div>
       </main>
     </div>
   </div>
