@@ -6,18 +6,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 const sourceSiteDir = path.join(projectRoot, 'site');
-const sourcePacketPath = path.join(projectRoot, 'docs', 'TAMMY-REVIEW-PACKET.html');
 const sourceFallbackDir = path.join(projectRoot, 'assets', 'fallback', 'generated');
 const outputDir = path.join(projectRoot, 'dist', 'review-site');
-const outputPacketDir = path.join(outputDir, 'packet');
 const outputFallbackDir = path.join(outputDir, 'assets', 'fallback', 'generated');
 
 fs.rmSync(outputDir, { recursive: true, force: true });
 fs.mkdirSync(outputDir, { recursive: true });
 
 copyDir(sourceSiteDir, outputDir);
-fs.mkdirSync(outputPacketDir, { recursive: true });
-fs.copyFileSync(sourcePacketPath, path.join(outputPacketDir, 'index.html'));
 copyDir(sourceFallbackDir, outputFallbackDir);
 
 fs.writeFileSync(
@@ -25,7 +21,6 @@ fs.writeFileSync(
   JSON.stringify(
     {
       generatedAt: new Date().toISOString(),
-      packet: 'packet/index.html',
       fallbackManifest: 'assets/fallback/generated/manifest.json',
       note: 'Static review site for Tammy-facing preview hosting. Presentation-safe only; not proof of a live Google-authenticated run.',
     },
