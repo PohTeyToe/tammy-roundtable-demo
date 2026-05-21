@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tammy Roundtable Demo - Upload</title>
+<base target="_top">
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f3ea;color:#1f1e1c;margin:0;padding:40px 20px;}
+  .wrap{max-width:640px;margin:0 auto;background:#fff;border:1px solid #e5dfd0;border-radius:14px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.04);}
+  h1{font-family:Fraunces,Georgia,serif;font-size:26px;margin:0 0 6px;}
+  p.lead{color:#6b6862;margin:0 0 22px;font-size:15px;line-height:1.5;}
+  .drop{border:2px dashed #c9c2ad;border-radius:12px;padding:28px;text-align:center;cursor:pointer;background:#fbf8f0;transition:background .15s;}
+  .drop.hover{background:#f1ebd9;border-color:#9a8f6c;}
+  .drop input{display:none;}
+  .drop .icon{font-size:34px;font-weight:600;color:#9a8f6c;}
+  .drop .hint{color:#6b6862;font-size:13px;margin-top:6px;}
+  button{margin-top:18px;background:#1f3a2b;color:#fff;border:0;padding:12px 22px;border-radius:8px;font-size:15px;cursor:pointer;width:100%;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .status{margin-top:18px;font-size:14px;color:#1f3a2b;min-height:20px;}
+  .result{margin-top:18px;padding:16px;background:#f3efe1;border-radius:10px;font-size:14px;display:none;}
+  .result a{color:#1f3a2b;text-decoration:underline;display:block;margin:4px 0;}
+  .result h3{margin:0 0 8px;font-size:15px;}
+  .err{color:#8a1f1f;margin-top:10px;font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Signed agreement upload</h1>
+  <p class="lead">Drop a signed Exclusive Buyer or Seller Agreement PDF. The system reads it, creates the closing folder, seeds the trade record, schedules condition and possession reminders, and drafts the next-step email.</p>
+  <label class="drop" id="drop">
+    <div class="icon">PDF</div>
+    <div id="picked">Click or drop a PDF here</div>
+    <div class="hint">No real FINTRAC documents. Demo data only.</div>
+    <input type="file" id="file" accept="application/pdf,.pdf">
+  </label>
+  <button id="go" disabled>Process agreement</button>
+  <div class="status" id="status"></div>
+  <div class="result" id="result"></div>
+  <div class="err" id="err"></div>
+</div>
+<script>
+  var fileEl = document.getElementById('file');
+  var pickedEl = document.getElementById('picked');
+  var goEl = document.getElementById('go');
+  var statusEl = document.getElementById('status');
+  var resultEl = document.getElementById('result');
+  var errEl = document.getElementById('err');
+  var dropEl = document.getElementById('drop');
+  var currentFile = null;
+
+  function setFile(f) {
+    currentFile = f;
+    if (f) {
+      pickedEl.textContent = f.name + ' (' + Math.round(f.size / 1024) + ' KB)';
+      goEl.disabled = false;
+    } else {
+      pickedEl.textContent = 'Click or drop a PDF here';
+      goEl.disabled = true;
+    }
+  }
+
+  fileEl.addEventListener('change', function (e) { setFile(e.target.files[0]); });
+  dropEl.addEventListener('dragover', function (e) { e.preventDefault(); dropEl.classList.add('hover'); });
+  dropEl.addEventListener('dragleave', function () { dropEl.classList.remove('hover'); });
+  dropEl.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropEl.classList.remove('hover');
+    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+
+  goEl.addEventListener('click', function () {
+    if (!currentFile) return;
+    goEl.disabled = true;
+    statusEl.textContent = 'Reading file...';
+    resultEl.style.display = 'none';
+    errEl.textContent = '';
+    var reader = new FileReader();
+    reader.onload = function () {
+      var base64 = reader.result.split(',')[1];
+      statusEl.textContent = 'Uploading and running the pipeline. This takes 30 to 60 seconds...';
+      google.script.run
+        .withSuccessHandler(onDone)
+        .withFailureHandler(onFail)
+        .trdProcessUploadedAgreementBase64({
+          fileBase64: base64,
+          fileName: currentFile.name,
+          mimeType: currentFile.type || 'application/pdf'
+        });
+    };
+    reader.readAsDataURL(currentFile);
+  });
+
+  function onDone(r) {
+    statusEl.textContent = 'Done.';
+    resultEl.style.display = 'block';
+    var html = '<h3>' + r.transactionId + ' &mdash; ' + r.side + ' side</h3>';
+    if (r.folderUrl) html += '<a href="' + r.folderUrl + '" target="_blank">Drive folder</a>';
+    if (r.spreadsheetUrl) html += '<a href="' + r.spreadsheetUrl + '" target="_blank">Trade record (Sheets)</a>';
+    if (r.draftUrl) html += '<a href="' + r.draftUrl + '" target="_blank">Gmail draft</a>';
+    resultEl.innerHTML = html;
+    goEl.disabled = false;
+  }
+
+  function onFail(e) {
+    statusEl.textContent = '';
+    errEl.textContent = (e && e.message) || 'Upload failed.';
+    goEl.disabled = false;
+  }
+</script>
+</body>
+</html>
+

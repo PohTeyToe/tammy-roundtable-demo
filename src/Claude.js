@@ -1,6 +1,9 @@
 function trdGetClaudeConfig() {
+  const apiKey = trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiKey) || '';
+  const isOAuth = apiKey.indexOf('sk-ant-oat') === 0;
   return {
-    apiKey: trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiKey),
+    apiKey: apiKey,
+    isOAuth: isOAuth,
     apiUrl: trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiUrl) || TRD_CONFIG.defaultClaudeConfig.apiUrl,
     apiVersion: trdGetProperty(TRD_CONFIG.propertyKeys.claudeApiVersion) || TRD_CONFIG.defaultClaudeConfig.apiVersion,
     defaultModel: trdGetProperty(TRD_CONFIG.propertyKeys.claudeModel) || TRD_CONFIG.defaultClaudeConfig.model,
@@ -41,14 +44,18 @@ function trdCallClaudeJson(task, contentBlocks, promptText) {
       },
     ],
   };
+  const headers = { 'anthropic-version': config.apiVersion };
+  if (config.isOAuth) {
+    headers['Authorization'] = 'Bearer ' + config.apiKey;
+    headers['anthropic-beta'] = 'oauth-2025-04-20';
+  } else {
+    headers['x-api-key'] = config.apiKey;
+  }
   const response = UrlFetchApp.fetch(config.apiUrl, {
     method: 'post',
     contentType: 'application/json',
     muteHttpExceptions: true,
-    headers: {
-      'x-api-key': config.apiKey,
-      'anthropic-version': config.apiVersion,
-    },
+    headers: headers,
     payload: JSON.stringify(payload),
   });
   const responseText = response.getContentText();
