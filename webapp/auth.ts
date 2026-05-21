@@ -48,6 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           scope: SCOPES,
           access_type: "offline",
           prompt: "consent",
+          include_granted_scopes: "true",
         },
       },
     }),

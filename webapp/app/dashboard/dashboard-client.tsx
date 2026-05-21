@@ -403,6 +403,12 @@ function Note({ title, children }: { title: string; children: React.ReactNode })
 }
 
 function ErrorBanner({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  // Detect Google's 403 "insufficient authentication scopes" so the user gets
+  // the actual fix (re-grant Drive/Sheets/Calendar/Gmail on the consent screen)
+  // instead of the generic "try again" message.
+  const isScopeError =
+    /insufficient.*scope|insufficientPermissions|PERMISSION_DENIED/i.test(message);
+
   return (
     <div
       role="alert"
@@ -418,11 +424,28 @@ function ErrorBanner({ message, onDismiss }: { message: string; onDismiss: () =>
       </span>
       <div className="flex-1 min-w-0">
         <p className="font-mono text-[10px] tracking-[0.18em] uppercase mb-2" style={{ color: "var(--danger)" }}>
-          Something went wrong
+          {isScopeError ? "Google permissions missing" : "Something went wrong"}
         </p>
-        <p className="text-[14px] leading-[1.6] text-ink">
-          The pipeline did not finish. Your file did not leave your computer. Try again, or sign out and back in.
-        </p>
+        {isScopeError ? (
+          <>
+            <p className="text-[14px] leading-[1.6] text-ink">
+              Google didn&apos;t grant the app full access to your Drive, Sheets, Calendar, or Gmail. This usually means a checkbox was unchecked on Google&apos;s consent screen.
+            </p>
+            <p className="text-[13px] leading-[1.6] text-ink-2 mt-2">
+              Fix in one minute:
+            </p>
+            <ol className="text-[13px] leading-[1.7] text-ink-2 mt-1 ml-4 list-decimal">
+              <li>Open <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener" className="underline">myaccount.google.com/permissions</a></li>
+              <li>Find &quot;MCC Realtor Workflow&quot; (or this app), click it, then &quot;Remove access&quot;</li>
+              <li>Come back here, sign out, then sign in again</li>
+              <li>On Google&apos;s consent screen, make sure <strong>every</strong> permission checkbox is ticked, then click Continue</li>
+            </ol>
+          </>
+        ) : (
+          <p className="text-[14px] leading-[1.6] text-ink">
+            The pipeline did not finish. Your file did not leave your computer. Try again, or sign out and back in.
+          </p>
+        )}
         <details className="mt-3 group">
           <summary className="cursor-pointer text-[12px] text-ink-3 hover:text-ink-2 transition-calm select-none inline-flex items-center gap-1.5 list-none">
             <span className="inline-block w-2 h-2 border-r border-b border-ink-3 rotate-[-45deg] group-open:rotate-45 transition-transform" aria-hidden="true" />
