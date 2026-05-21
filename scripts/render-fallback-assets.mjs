@@ -1027,14 +1027,10 @@ function renderTradeRecord() {
 
   const checklist = [
     ['Signed agreement (Exclusive Buyer / Seller)', 'Complete', '2026-05-19', 'Exclusive Buyer Agreement uploaded via DocuSign'],
-    ['Buyer identity verified (FINTRAC)', 'Complete', '2026-05-19', 'On file'],
-    ['Seller identity verified (FINTRAC)', 'Complete', '2026-05-19', 'On file'],
-    ['Deposit confirmed', 'Complete', '2026-05-19', 'From buyer agent'],
-    ['MLS copy on file', 'Complete', '2026-05-18', 'Pulled from MLS export'],
-    ['Buyer lawyer contact', 'Complete', '2026-05-19', 'Summit Legal'],
-    ['Seller lawyer contact', 'Complete', '2026-05-19', 'Jordan &amp; Co.'],
+    ['Purchase contract & amendments', 'Complete', '2026-05-19', 'Residential Purchase Contract on file'],
+    ['Deposit confirmed', 'Complete', '2026-05-19', 'Trust cheque from buyer agent'],
     ['Condition waiver / fulfillment', 'Pending', '', 'Due 2026-05-21'],
-    ['Possession confirmed', 'Pending', '', 'Scheduled 2026-06-15'],
+    ['MLS listing on file', 'Complete', '2026-05-18', 'Pulled from MLS export A2145678'],
     ['Trade record review', 'Pending', '', 'Closing checklist sign-off'],
   ];
 
@@ -1043,7 +1039,7 @@ function renderTradeRecord() {
       <div class="tr-cl-banner">
         <span class="tr-cl-badge">Realtor validation</span>
         <span class="tr-cl-title">Trade record checklist</span>
-        <span class="tr-cl-meta">7 of 10 complete / 3 pending</span>
+        <span class="tr-cl-meta">4 of 6 complete / 2 pending</span>
       </div>
       <div class="tr-cl-grid">
         <div class="tr-cl-row tr-cl-head">
