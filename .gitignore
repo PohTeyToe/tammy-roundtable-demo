@@ -7,3 +7,7 @@ Thumbs.db
 
 .vercel
 .playwright-cli/
+webapp/.next/
+webapp/node_modules/
+webapp/.vercel/
+webapp/.env*.local
