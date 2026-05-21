@@ -297,6 +297,19 @@ function doGet(e) {
   }
 }
 
+function trdRunWithBuiltInSamplePdf() {
+  const url = 'https://tammy-roundtable-demo.vercel.app/samples/exclusive-buyer-agreement-jordan-patel.pdf';
+  const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  if (response.getResponseCode() < 200 || response.getResponseCode() >= 300) {
+    throw new Error('Could not fetch sample PDF (' + response.getResponseCode() + ').');
+  }
+  const blob = response.getBlob();
+  const demoFolder = trdEnsureDemoFolder();
+  const fileName = 'Exclusive Buyer Agreement - Jordan Patel (sample).pdf';
+  const file = demoFolder.createFile(blob.copyBlob().setName(fileName).setContentType('application/pdf'));
+  return runFromAgreementUploadByDriveFileId(file.getId());
+}
+
 function trdProcessUploadedAgreementBase64(payload) {
   const base64 = payload && payload.fileBase64;
   trdRequire(base64, 'fileBase64 is required');

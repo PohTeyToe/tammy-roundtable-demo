@@ -34,9 +34,14 @@
     <input type="file" id="file" accept="application/pdf,.pdf">
   </label>
   <button id="go" disabled>Process agreement</button>
+  <button id="sample" type="button" style="margin-top:10px;background:transparent;color:#1f3a2b;border:1px solid #c9c2ad;">Or run with the built-in sample buyer agreement</button>
   <div class="status" id="status"></div>
   <div class="result" id="result"></div>
   <div class="err" id="err"></div>
+  <details class="diag" style="margin-top:18px;font-size:12px;color:#6b6862;">
+    <summary style="cursor:pointer;">What this is doing</summary>
+    <p>The pipeline runs against <strong>your</strong> Google account. It will create a "Tammy Roundtable Demo" folder and workbook in your Drive on first run, then for every uploaded agreement: a sub-folder with the closing taxonomy, a row in your trade record sheet, two reminder events on your calendar, and a draft email in your Gmail. Nothing sends.</p>
+  </details>
 </div>
 <script>
   var fileEl = document.getElementById('file');
@@ -68,16 +73,15 @@
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   });
 
+  var sampleEl = document.getElementById('sample');
+
   goEl.addEventListener('click', function () {
     if (!currentFile) return;
-    goEl.disabled = true;
-    statusEl.textContent = 'Reading file...';
-    resultEl.style.display = 'none';
-    errEl.textContent = '';
+    setBusy(true, 'Reading file...');
     var reader = new FileReader();
     reader.onload = function () {
       var base64 = reader.result.split(',')[1];
-      statusEl.textContent = 'Uploading and running the pipeline. This takes 30 to 60 seconds...';
+      setBusy(true, 'Uploading and running the pipeline. This takes 30 to 60 seconds...');
       google.script.run
         .withSuccessHandler(onDone)
         .withFailureHandler(onFail)
@@ -90,21 +94,40 @@
     reader.readAsDataURL(currentFile);
   });
 
+  sampleEl.addEventListener('click', function () {
+    setBusy(true, 'Fetching the sample buyer agreement and running the pipeline (30 to 60s)...');
+    google.script.run
+      .withSuccessHandler(onDone)
+      .withFailureHandler(onFail)
+      .trdRunWithBuiltInSamplePdf();
+  });
+
+  function setBusy(busy, message) {
+    goEl.disabled = busy || !currentFile;
+    sampleEl.disabled = busy;
+    statusEl.textContent = message || '';
+    if (busy) {
+      resultEl.style.display = 'none';
+      errEl.textContent = '';
+    }
+  }
+
   function onDone(r) {
+    setBusy(false);
     statusEl.textContent = 'Done.';
     resultEl.style.display = 'block';
-    var html = '<h3>' + r.transactionId + ' &mdash; ' + r.side + ' side</h3>';
-    if (r.folderUrl) html += '<a href="' + r.folderUrl + '" target="_blank">Drive folder</a>';
-    if (r.spreadsheetUrl) html += '<a href="' + r.spreadsheetUrl + '" target="_blank">Trade record (Sheets)</a>';
-    if (r.draftUrl) html += '<a href="' + r.draftUrl + '" target="_blank">Gmail draft</a>';
+    var html = '<h3>' + (r.transactionId || 'Pipeline result') + ' &mdash; ' + (r.side || '') + ' side</h3>';
+    if (r.folderUrl) html += '<a href="' + r.folderUrl + '" target="_blank">Drive folder (your account)</a>';
+    if (r.spreadsheetUrl) html += '<a href="' + r.spreadsheetUrl + '" target="_blank">Trade record sheet (your account)</a>';
+    if (r.draftUrl) html += '<a href="' + r.draftUrl + '" target="_blank">Gmail draft (your account)</a>';
     resultEl.innerHTML = html;
-    goEl.disabled = false;
   }
 
   function onFail(e) {
+    setBusy(false);
     statusEl.textContent = '';
-    errEl.textContent = (e && e.message) || 'Upload failed.';
-    goEl.disabled = false;
+    var msg = (e && (e.message || e.toString())) || 'Upload failed.';
+    errEl.innerHTML = '<strong>Error:</strong> ' + msg.replace(/</g, '&lt;') + '<br><small>Take a screenshot of this and send it to Abdal so we can fix it.</small>';
   }
 </script>
 </body>
