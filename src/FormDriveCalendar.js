@@ -78,7 +78,13 @@ function trdEnsureFormAndIntakeSheet() {
   trdSyncFormItems(form);
 
   const spreadsheetId = trdGetSpreadsheet().getId();
-  if (form.getDestinationId() !== spreadsheetId) {
+  let currentDestinationId = null;
+  try {
+    currentDestinationId = form.getDestinationId();
+  } catch (destinationError) {
+    currentDestinationId = null;
+  }
+  if (currentDestinationId !== spreadsheetId) {
     form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheetId);
   }
 

@@ -2,6 +2,7 @@ const TRD_CONFIG = Object.freeze({
   timeZone: 'America/Toronto',
   menuName: 'Tammy Roundtable Demo',
   demoFolderName: 'Tammy Roundtable Demo',
+  calendarName: 'Tammy Roundtable Demo Calendar',
   formTitle: 'New Transaction Intake Demo',
   formDescription:
     'Demo-only form for the Tammy May 21 roundtable. Use sample data only. No live client or FINTRAC documents.',
@@ -120,19 +121,9 @@ const TRD_CONFIG = Object.freeze({
     { key: 'contractNumber', header: 'Extracted Contract Number' },
   ]),
   extractionMinimumFieldKeys: Object.freeze([
-    'transactionId',
     'dealAddress',
     'buyerName',
     'sellerName',
-    'soldPrice',
-    'saleDate',
-    'possessionDate',
-    'listingRealtor',
-    'sellingRealtor',
-    'condition1Name',
-    'condition1Date',
-    'buyerLawyer',
-    'sellerLawyer',
   ]),
   supportedSourceMimeTypes: Object.freeze({
     pdf: 'application/pdf',

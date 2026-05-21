@@ -168,6 +168,14 @@
 
     .btn-ghost:hover { background: var(--paper-strong); }
 
+    .live-note {
+      margin: 12px 0 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 56ch;
+    }
+
     .btn .key { font-family: var(--mono); font-size: 11px; opacity: 0.7; padding: 2px 6px; border: 1px solid currentColor; border-radius: 5px; }
 
     /* Sticky transaction card */
@@ -657,9 +665,11 @@
         <h1>When a Realtor closes a deal, <span class="accent">five things</span> should happen on their own.</h1>
         <p class="lede">Built for the realtor roundtable. Step 1 is uploading the signed DocuSign agreement. From there the Drive folder, trade record, calendar reminders, and Gmail draft all set themselves up. The validation checklist at the bottom of the trade record is the Realtor anchor.</p>
         <div class="cta-row">
-          <button class="btn btn-primary" id="playBtn">Watch the flow</button>
+          <a class="btn btn-primary" href="https://script.google.com/macros/s/AKfycbz8g4bxDhk1CzVIo7XbtXaB3gA48cYSH0tY5zTnbTM82Q9Gpy4cEGa1z7sryqQ72vEh2Q/exec" target="_blank" rel="noopener">Try it live</a>
+          <button class="btn btn-ghost" id="playBtn">Watch the flow</button>
           <a class="btn btn-ghost" href="packet/">Open the full packet</a>
         </div>
+        <p class="live-note">"Try it live" opens the real Apps Script web app. Drop a signed Buyer or Seller Agreement PDF and the pipeline runs end-to-end against a test Google account: Drive folder, Sheets row, calendar reminders, and a Gmail draft.</p>
       </div>
 
       <aside class="tcard">

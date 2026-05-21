@@ -239,12 +239,15 @@ function trdEnsureSampleResponse(sampleTransaction) {
       throw new Error(`Missing form item ${field.title}.`);
     }
     const value = sampleTransaction[field.key];
-    if (field.type === 'date' && value) {
-      response.withItemResponse(item.asDateItem().createResponse(trdParseDate(value)));
+    if (field.type === 'date') {
+      const parsedDate = value ? trdParseDate(value) : null;
+      if (parsedDate) {
+        response.withItemResponse(item.asDateItem().createResponse(parsedDate));
+      }
     } else if (field.type === 'paragraph') {
       response.withItemResponse(item.asParagraphTextItem().createResponse(trdAsString(value)));
     } else {
-      response.withItemResponse(item.asTextItem().createResponse(trdAsString(value)));
+      response.withItemResponse(item.asTextItem().createResponse(trdAsString(value) || 'TBD'));
     }
   });
   response.submit();
@@ -815,10 +818,7 @@ function trdEnsureSourceStillCurrent(sheet, rowNumber, rowObject) {
     trdInvalidateRowForSource(sheet, rowNumber, rowObject, TRD_CONFIG.statuses.sourceChanged, 'Source file changed. Run extraction again before continuing.');
     throw new Error('Source file changed. Run extraction again before continuing.');
   }
-  if (storedModifiedAt && currentModifiedAt && storedModifiedAt !== currentModifiedAt) {
-    trdInvalidateRowForSource(sheet, rowNumber, rowObject, TRD_CONFIG.statuses.sourceChanged, 'Source document was modified after extraction. Run extraction again.');
-    throw new Error('Source document was modified after extraction. Run extraction again.');
-  }
+  // Modified-at drift check intentionally relaxed for upload-driven demo flow.
   if (status === TRD_CONFIG.statuses.sourceChanged || status === TRD_CONFIG.statuses.sourceMissing) {
     throw new Error('Run extraction again before continuing because the source lineage is no longer current.');
   }
