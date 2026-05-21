@@ -43,13 +43,13 @@ export default async function Home() {
             </div>
           </div>
           <p className="hidden md:block font-mono text-[10px] tracking-[0.16em] uppercase text-ink-3">
-            Demo for the May 21 roundtable
+            Realtor roundtable preview
           </p>
         </header>
 
         <div className="grid gap-16 md:gap-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24 items-start">
           {/* Editorial lede */}
-          <section className="max-w-[34rem]">
+          <section className="max-w-[34rem] order-2 lg:order-1">
             <p className="font-mono text-[11px] tracking-[0.20em] uppercase text-ink-3 mb-6">
               When a deal closes
             </p>
@@ -78,7 +78,7 @@ export default async function Home() {
           </section>
 
           {/* Sign-in card, anchored editorially */}
-          <aside className="lg:sticky lg:top-12">
+          <aside className="order-1 lg:order-2 lg:sticky lg:top-12">
             <div className="rounded-[6px] bg-paper-2 border border-rule shadow-[var(--shadow-2)] overflow-hidden">
               <div className="px-7 pt-7 pb-6 border-b border-rule">
                 <p className="font-mono text-[10px] tracking-[0.20em] uppercase text-ink-3">
@@ -129,7 +129,7 @@ export default async function Home() {
               Built around
             </p>
             <p className="text-[13.5px] leading-[1.6] text-ink-2 max-w-[24rem]">
-              Tammy MacKenzie&rsquo;s revised flow. One transaction folder per deal, RMS &amp; Photos or Condo Docs as the only nested folder, the trade record checklist at the bottom of the sheet.
+              The revised flow from Tammy MacKenzie, broker of record at Maxwell Canyon Creek. One transaction folder per deal, RMS &amp; Photos or Condo Docs as the only nested folder, the trade record checklist at the bottom of the sheet.
             </p>
           </aside>
         </div>
@@ -140,7 +140,7 @@ export default async function Home() {
             Maxwell Canyon Creek &middot; Realtor demo &middot; 2026
           </p>
           <p className="text-[12px] text-ink-3">
-            For the May 21 realtor roundtable. Not a production system.
+            Built for the realtor roundtable preview. Not a production system.
           </p>
         </footer>
       </div>
@@ -150,29 +150,13 @@ export default async function Home() {
 
 function Crest() {
   return (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
+    <span
       aria-hidden="true"
-      className="text-accent"
+      className="inline-flex w-8 h-8 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[15px] leading-none tracking-[0.02em]"
+      style={{ fontFeatureSettings: "'ss01' on" }}
     >
-      <path
-        d="M16 3 L27 9 L27 18 C27 23.5 22.5 28 16 29.5 C9.5 28 5 23.5 5 18 L5 9 Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-      />
-      <path
-        d="M11 17 L15 13 L17.5 15.5 L21 12"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+      <span className="-translate-y-[0.5px]">MCC</span>
+    </span>
   );
 }
 

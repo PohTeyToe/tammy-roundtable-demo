@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type PipelineResult = {
@@ -22,14 +22,6 @@ type PipelineResult = {
   };
 };
 
-const PIPELINE_PHASES = [
-  { label: "Reading the agreement", hint: "Claude is extracting buyer, seller, address, dates" },
-  { label: "Filing in Drive", hint: "Creating the transaction folder and uploading the PDF" },
-  { label: "Seeding the trade record", hint: "Appending a row to your workbook" },
-  { label: "Setting reminders", hint: "Condition deadline + possession on your calendar" },
-  { label: "Drafting the follow-up", hint: "Gmail draft, never auto-sent" },
-];
-
 type Props = {
   hasWorkspace: boolean;
   workbookUrl?: string;
@@ -38,29 +30,11 @@ type Props = {
 export default function DashboardClient({ hasWorkspace, workbookUrl }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
-  const [phase, setPhase] = useState(0);
   const [fileName, setFileName] = useState<string | null>(null);
   const [result, setResult] = useState<PipelineResult | null>(null);
   const [error, setError] = useState<string>("");
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const phaseTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Cycle through phase indicators while waiting (cosmetic; real progress is opaque)
-  useEffect(() => {
-    if (!busy) {
-      if (phaseTimer.current) clearInterval(phaseTimer.current);
-      phaseTimer.current = null;
-      return;
-    }
-    setPhase(0);
-    phaseTimer.current = setInterval(() => {
-      setPhase((p) => Math.min(p + 1, PIPELINE_PHASES.length - 1));
-    }, 9000);
-    return () => {
-      if (phaseTimer.current) clearInterval(phaseTimer.current);
-    };
-  }, [busy]);
 
   const run = useCallback(
     async (fn: () => Promise<Response>, displayName: string) => {
@@ -114,52 +88,40 @@ export default function DashboardClient({ hasWorkspace, workbookUrl }: Props) {
 
   if (busy) {
     return (
-      <section className="rounded-[6px] bg-paper-2 border border-rule shadow-[var(--shadow-1)] overflow-hidden">
+      <section
+        role="status"
+        aria-live="polite"
+        className="rounded-[6px] bg-paper-2 border border-rule shadow-[var(--shadow-1)] overflow-hidden"
+      >
         <div className="px-6 md:px-8 py-7 border-b border-rule">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Spinner />
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="font-mono text-[10px] tracking-[0.20em] uppercase text-ink-3">
-                Running pipeline
+                In progress
               </p>
-              <p className="mt-1 font-serif text-[18px] leading-tight text-ink">
-                {fileName || "Processing your agreement"}
+              <p className="mt-1 font-serif text-[22px] leading-tight text-ink">
+                Filing the deal in your Google account.
               </p>
+              {fileName ? (
+                <p className="mt-1.5 text-[13px] text-ink-2 truncate">
+                  <span className="font-mono text-[11.5px] text-ink-3">file</span>{" "}
+                  {fileName}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
-        <ol className="px-6 md:px-8 py-6 grid gap-4">
-          {PIPELINE_PHASES.map((p, i) => {
-            const done = i < phase;
-            const active = i === phase;
-            return (
-              <li key={p.label} className="grid grid-cols-[1.5rem_1fr] gap-3 items-start">
-                <span
-                  aria-hidden="true"
-                  className={`mt-1 inline-flex w-[18px] h-[18px] rounded-full items-center justify-center text-[10px] font-mono ${
-                    done
-                      ? "bg-accent text-accent-ink"
-                      : active
-                      ? "border border-accent text-accent shimmer"
-                      : "border border-rule text-ink-4"
-                  }`}
-                >
-                  {done ? <Check /> : i + 1}
-                </span>
-                <div className={active ? "" : done ? "" : "opacity-60"}>
-                  <p className={`text-[14px] ${active ? "text-ink font-medium" : "text-ink-2"}`}>
-                    {p.label}
-                  </p>
-                  {(active || done) && (
-                    <p className="text-[12.5px] text-ink-3 mt-0.5">{p.hint}</p>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+        <div className="px-6 md:px-8 py-6 grid gap-3 text-[13px] leading-[1.6] text-ink-2">
+          <p>
+            We are reading the agreement, filing the PDF in your Drive, appending the trade record row, setting condition and possession reminders, and drafting the follow-up email.
+          </p>
+          <p className="text-ink-3 text-[12.5px]">
+            About thirty to sixty seconds. The result panel appears below once the run finishes.
+          </p>
+        </div>
         <div className="px-6 md:px-8 py-4 bg-paper-3 border-t border-rule text-[12px] text-ink-3">
-          About thirty to sixty seconds. We are talking to your Drive, Sheets, Calendar and Gmail in turn.
+          Drive, Sheets, Calendar and Gmail. All in your own Google account.
         </div>
       </section>
     );
@@ -455,12 +417,21 @@ function ErrorBanner({ message, onDismiss }: { message: string; onDismiss: () =>
         !
       </span>
       <div className="flex-1 min-w-0">
-        <p className="font-mono text-[10px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--danger)" }}>
+        <p className="font-mono text-[10px] tracking-[0.18em] uppercase mb-2" style={{ color: "var(--danger)" }}>
           Something went wrong
         </p>
-        <pre className="whitespace-pre-wrap text-[12.5px] leading-relaxed text-ink-2 font-mono">
-          {message}
-        </pre>
+        <p className="text-[14px] leading-[1.6] text-ink">
+          The pipeline did not finish. Your file did not leave your computer. Try again, or sign out and back in.
+        </p>
+        <details className="mt-3 group">
+          <summary className="cursor-pointer text-[12px] text-ink-3 hover:text-ink-2 transition-calm select-none inline-flex items-center gap-1.5 list-none">
+            <span className="inline-block w-2 h-2 border-r border-b border-ink-3 rotate-[-45deg] group-open:rotate-45 transition-transform" aria-hidden="true" />
+            Technical detail
+          </summary>
+          <pre className="mt-2 whitespace-pre-wrap text-[12px] leading-relaxed text-ink-2 font-mono p-3 rounded-[4px] bg-paper-3 border border-rule overflow-x-auto">
+            {message}
+          </pre>
+        </details>
       </div>
       <button
         type="button"

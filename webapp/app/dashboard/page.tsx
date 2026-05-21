@@ -339,29 +339,13 @@ function ErrorState({ message }: { message: string }) {
 
 function Crest({ className = "" }: { className?: string }) {
   return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 32 32"
-      fill="none"
+    <span
       aria-hidden="true"
-      className={`text-accent ${className}`}
+      className={`inline-flex w-7 h-7 items-center justify-center rounded-[3px] border border-accent text-accent font-serif text-[13px] leading-none tracking-[0.02em] ${className}`}
+      style={{ fontFeatureSettings: "'ss01' on" }}
     >
-      <path
-        d="M16 3 L27 9 L27 18 C27 23.5 22.5 28 16 29.5 C9.5 28 5 23.5 5 18 L5 9 Z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-      />
-      <path
-        d="M11 17 L15 13 L17.5 15.5 L21 12"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+      <span className="-translate-y-[0.5px]">MCC</span>
+    </span>
   );
 }
 

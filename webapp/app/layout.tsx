@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   title: "MCC Realtor Workflow",
   description:
     "When a Realtor closes a deal, five things should happen on their own. Drop a signed agreement, the rest files itself in your Google account.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export const viewport: Viewport = {
