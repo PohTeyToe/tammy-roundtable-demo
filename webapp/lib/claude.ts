@@ -23,6 +23,7 @@ const EXTRACTION_SCHEMA_HINT = `JSON schema:
   "mlsNumber": "",
   "contractNumber": "",
   "side": "buyer | seller",
+  "propertyType": "residential | condo",
   "summary": ""
 }`;
 
@@ -45,6 +46,7 @@ export type ExtractedAgreement = {
   mlsNumber: string;
   contractNumber: string;
   side: "buyer" | "seller";
+  propertyType: "residential" | "condo";
   summary: string;
 };
 
@@ -82,6 +84,7 @@ export async function extractAgreement(pdfBytes: Uint8Array): Promise<ExtractedA
               "Use empty strings for anything not clearly supported by the document. " +
               "Dates must be yyyy-mm-dd if explicit. " +
               "Decide side: 'buyer' if it is a buyer/exclusive-buyer agreement, 'seller' for a listing/seller agreement. " +
+              "Decide propertyType: 'condo' if the property is a condominium / strata / apartment-style unit (look for 'condo', 'condominium', 'strata', unit/suite numbers, condo-fee mentions). Otherwise 'residential'. " +
               EXTRACTION_SCHEMA_HINT,
           },
         ],
@@ -139,6 +142,7 @@ export async function extractAgreement(pdfBytes: Uint8Array): Promise<ExtractedA
     mlsNumber: norm("mlsNumber"),
     contractNumber: norm("contractNumber"),
     side: parsed.side === "seller" ? "seller" : "buyer",
+    propertyType: parsed.propertyType === "condo" ? "condo" : "residential",
     summary: norm("summary"),
   };
 }
