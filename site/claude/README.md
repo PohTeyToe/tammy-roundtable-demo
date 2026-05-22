@@ -6,6 +6,12 @@ Standalone Tammy-facing presenter route:
 - `site/claude/style.css`
 - `site/claude/app.js`
 
+Status:
+
+- this route is tracked as a historical draft / experimental snapshot
+- it is not ratified as the final Tammy-facing Claude package
+- preserve it for provenance and future rebuilds, but do not treat the current page implementation as final truth
+
 Current direction:
 
 - separate Claude education / follow-up lane, not the core workflow walkthrough
