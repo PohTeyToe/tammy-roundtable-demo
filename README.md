@@ -1,8 +1,39 @@
 # Tammy Roundtable Demo
 
-Standalone Apps Script artifact for Tammy's May 21, 2026 roundtable workflow demo.
+Standalone roundtable artifact set for Tammy's realtor workflow story.
 
-This repo now implements the phase-separated operator flow inside the bound workbook:
+The May 21, 2026 meeting is past. This repo is now a post-roundtable artifact and follow-up surface, not a live-prep repo.
+
+## Surface map
+
+- `src/`
+  - Apps Script workbook workflow and Google-native fallback path
+  - use for `clasp`, workbook logic, and the original Drive/Sheet/Gmail draft pipeline
+- `webapp/`
+  - live Next.js Realtor Workflow app
+  - use for deployed app behavior, auth, Vercel ops, and the try-it surface people actually open
+- `site/`
+  - static walkthrough and review pages
+  - use for browser-facing explainer material
+- `site/claude/`
+  - separate Claude education / follow-up page inside the static site surface
+  - use for the Claude explainer lane, not the main workflow demo
+- `C:\VFC\.ops\context\claude-roundtable-pack\`
+  - private source pack behind `site/claude/`
+  - use for lesson provenance, reusable wording, and FAQ / objection handling
+
+## Status
+
+- the roundtable is past
+- `webapp/` is the live try-it surface for the roundtable lane
+- `src/` is implementation-complete but its live `clasp` execution path from this machine is still unverified
+- `site/` is the static walkthrough / review lane
+- `site/claude/` is a separate Claude explainer lane and should not be conflated with the workflow walkthrough
+- [docs/STATUS-2026-05-21.md](C:/VFC/tammy-roundtable-demo/docs/STATUS-2026-05-21.md:1) is a dated historical note, not the current repo router
+
+## Apps Script surface
+
+Inside `src/`, the repo implements the phase-separated operator flow inside the bound workbook:
 
 - `Run Extraction`
 - `Approve Review`
@@ -10,18 +41,7 @@ This repo now implements the phase-separated operator flow inside the bound work
 - `Reverse Approval`
 - `Generate Draft`
 
-It also implements the attempt-aware row and log model, source-file lineage, shared Claude helper, seeded demo sources, and rerunnable local validation entrypoints.
-
-## Current completion target
-
-The active finish line for this repo is now:
-
-- implementation-complete
-- pushed and rerunnable
-- Tammy-packet-ready
-- explicit about what is and is not live-verified
-
-This repo does **not** currently claim end-to-end live Google execution from this machine. That remains a later validation pass once Google auth and Apps Script execution are available.
+That surface also implements the attempt-aware row and log model, source-file lineage, shared Claude helper, seeded demo sources, and rerunnable local validation entrypoints.
 
 ## What is implemented
 
@@ -50,7 +70,7 @@ This repo does **not** currently claim end-to-end live Google execution from thi
 - Gmail draft update-in-place behavior on reruns
 - seeded sample source documents for PDF, image, text-doc, and unsupported-format paths
 
-## What is not claimed yet
+## Known gaps
 
 - authenticated live execution from a Google account on this machine
 - working `clasp run` remote execution from the current auth chain
@@ -60,10 +80,11 @@ This repo does **not** currently claim end-to-end live Google execution from thi
 ## Start here
 
 1. [AGENTS.md](C:/VFC/tammy-roundtable-demo/AGENTS.md:1)
-2. [docs/VERIFICATION.md](C:/VFC/tammy-roundtable-demo/docs/VERIFICATION.md:1)
-3. [docs/HANDOFF.md](C:/VFC/tammy-roundtable-demo/docs/HANDOFF.md:1)
-4. [docs/WALKTHROUGH.md](C:/VFC/tammy-roundtable-demo/docs/WALKTHROUGH.md:1)
-5. [docs/TAMMY-REVIEW-PACKET.html](C:/VFC/tammy-roundtable-demo/docs/TAMMY-REVIEW-PACKET.html)
+2. [webapp/AGENTS.md](C:/VFC/tammy-roundtable-demo/webapp/AGENTS.md:1)
+3. [site/AGENTS.md](C:/VFC/tammy-roundtable-demo/site/AGENTS.md:1)
+4. [docs/VERIFICATION.md](C:/VFC/tammy-roundtable-demo/docs/VERIFICATION.md:1)
+5. [docs/HANDOFF.md](C:/VFC/tammy-roundtable-demo/docs/HANDOFF.md:1)
+6. [docs/TAMMY-REVIEW-PACKET.html](C:/VFC/tammy-roundtable-demo/docs/TAMMY-REVIEW-PACKET.html)
 
 ## Working commands
 
@@ -89,9 +110,10 @@ npm run deploy:review-site
 ## Repo layout
 
 - `src/`: Apps Script source files pushed with `clasp`
+- `webapp/`: live Next.js Realtor Workflow app
 - `scripts/`: local validation and Playwright helpers
-- `docs/`: walkthrough, verification, handoff, and Tammy-facing review packet
-- `site/`: static hosted front door for Vercel-style preview deployment
+- `docs/`: walkthrough, verification, handoff, and dated status notes
+- `site/`: static walkthrough, review pages, and the separate `site/claude/` explainer lane
 - `assets/fallback/generated/`: synthetic local presentation assets rendered from seeded sample data
 
 ## Hosted review site
