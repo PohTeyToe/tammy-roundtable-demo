@@ -113,6 +113,7 @@ npm run deploy:review-site
 - `webapp/`: live Next.js Realtor Workflow app
 - `scripts/`: local validation and Playwright helpers
 - `docs/`: walkthrough, verification, handoff, and dated status notes
+- `docs/plans/`: dated implementation notes for the May 2026 roundtable lane; historical reference only, not current deploy or communication canon
 - `site/`: static walkthrough, review pages, and the separate `site/claude/` explainer lane
 - `assets/fallback/generated/`: synthetic local presentation assets rendered from seeded sample data
 

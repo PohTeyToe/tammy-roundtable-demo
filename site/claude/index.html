@@ -3,240 +3,571 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Claude for Tammy / Realtor Roundtable Brief</title>
-  <meta name="description" content="Presenter-led Claude explainer for Tammy's realtor workflow roundtable.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2317282a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='%23f5efe5' font-family='Georgia' font-weight='700' font-size='26'%3EC%3C/text%3E%3C/svg%3E">
+  <title>Claude, for Tammy - Post-roundtable guide</title>
+  <meta name="description" content="A Tammy-facing mini-app that explains Claude in plain language, where it shows up, what it does well, and where human review stays in charge.">
+  <script>
+    (function () {
+      var base = document.createElement("base");
+      if (window.location.protocol === "file:") {
+        base.href = "./";
+      } else {
+        var path = window.location.pathname;
+        base.href = path.endsWith("/") ? path : path + "/";
+      }
+      document.head.appendChild(base);
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2319221f'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='%23f0d9b8' font-family='Georgia' font-weight='700' font-size='34'%3EC%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body data-notes="off" data-presenter="off">
-  <div class="page-shell">
-    <header class="masthead">
-      <div class="brand-stack">
-        <p class="masthead-mark">Claude roundtable brief</p>
-        <div>
-          <p class="masthead-title">MCC Realtor Workflow</p>
-          <p class="masthead-meta">Verified workflow artifacts, May 21, 2026</p>
+<body>
+  <div class="app" id="app">
+
+    <!-- ================== TOP APP BAR ================== -->
+    <header class="topbar" role="banner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">C</div>
+        <div class="brand-meta">
+          <p class="brand-kicker">Post-roundtable follow-up</p>
+          <p class="brand-title">Claude, for Tammy</p>
         </div>
       </div>
 
-      <div class="masthead-tools">
-        <button id="presenterToggle" class="toolbar-button" type="button" aria-pressed="false">Presenter off</button>
-        <button id="notesToggle" class="toolbar-button" type="button" aria-pressed="false">Notes off</button>
-        <button id="resetView" class="toolbar-button" type="button">Reset</button>
+      <nav class="progress" aria-label="Chapter progress">
+        <ol class="progress-rail" id="progressRail">
+          <!-- progress dots are injected by JS -->
+        </ol>
+      </nav>
+
+      <div class="topbar-meta">
+        <span class="meta-pill">
+          <span class="meta-dot" aria-hidden="true"></span>
+          Quick guide
+        </span>
       </div>
     </header>
 
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="hero-kicker">Realtor workflow brief</p>
-        <h1 id="hero-title">A signed agreement comes in. The admin work is already moving.</h1>
-        <p class="hero-lede">Claude reads the file, sets up the folder, stages the reminders, and drafts the follow-up. The realtor still reviews everything before it moves.</p>
-      </div>
-
-      <article class="hero-proof">
-        <div class="hero-proof-frame">
-          <img src="./images/workflow-file.png" alt="Prepared workflow folder preview from the realtor flow.">
-        </div>
-        <div class="hero-proof-copy">
-          <p class="hero-proof-label">Above the fold</p>
-          <h2>The room sees the output first.</h2>
-          <p>Start with one real result, then explain how the workflow got there.</p>
-        </div>
-      </article>
-
-      <article class="presenter-panel presenter-only">
-        <p class="presenter-label">Tammy opener</p>
-        <p class="presenter-script">"A signed agreement comes in. Claude helps line up the admin work around it. The realtor still checks the file before anything goes out."</p>
-        <ul class="presenter-points">
-          <li>Start with the agreement.</li>
-          <li>Show the proof on screen.</li>
-          <li>Land on the review step.</li>
-        </ul>
-      </article>
-    </section>
-
-    <div class="layout-grid">
-      <aside class="section-rail" aria-label="Presenter navigation">
-        <nav class="section-nav">
-          <p class="section-nav-label">Path</p>
-          <ol>
-            <li><a href="#workflow" data-nav-target="workflow"><span>I</span> Workflow</a></li>
-            <li><a href="#proof" data-nav-target="proof"><span>II</span> Proof</a></li>
-            <li><a class="nav-secondary" href="#frame" data-nav-target="frame"><span>III</span> Frame</a></li>
-            <li><a class="nav-secondary" href="#close" data-nav-target="close"><span>IV</span> Close</a></li>
-          </ol>
+    <!-- ================== APP BODY ================== -->
+    <div class="frame">
+      <aside class="rail" aria-label="Chapters">
+        <p class="rail-label">Guide</p>
+        <nav class="chapters" id="chapterNav">
+          <!-- chapter links injected by JS so progress + active state stays in sync -->
         </nav>
+
+        <div class="rail-foot">
+          <p class="rail-label">Why this exists</p>
+          <p class="rail-foot-line">A plain-language guide to where Claude helps, where review matters, and what that looks like in Tammy's world.</p>
+        </div>
       </aside>
 
-      <main class="page-main">
-        <section class="content-section reveal" id="workflow" data-section="workflow" aria-labelledby="workflow-title">
-          <header class="section-header">
-            <p class="section-index">I</p>
-            <div>
-              <h2 id="workflow-title">The workflow</h2>
-              <p class="section-intro">One example. Four steps.</p>
-            </div>
-          </header>
-          <aside class="speaker-note">Keep it concrete: agreement, folder, reminders, draft, review.</aside>
+      <main class="viewport" id="viewport">
 
-          <ol class="workflow-sequence">
-            <li>
-              <span class="workflow-sequence-number">01</span>
-              <div>
-                <h3>The signed agreement arrives</h3>
-                <p>Buyer or seller side. The file is in, the deal is real.</p>
+        <!-- ============ CHAPTER 1 · WELCOME ============ -->
+        <section class="chapter is-current" data-chapter="welcome" id="ch-welcome" aria-labelledby="welcome-title">
+          <div class="hero">
+            <div class="hero-copy">
+              <p class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Chapter 01 · Welcome</p>
+              <h1 class="hero-title" id="welcome-title">Claude, on <em>your</em> terms.</h1>
+              <p class="hero-lede">A plain-language guide to what Claude is, where it shows up, what it does well, and where human review still runs the show. Built for Tammy and the people around her, not for engineers.</p>
+
+              <div class="hero-actions">
+                <button class="cta cta-primary" type="button" data-action="next">
+                  <span>Begin</span>
+                  <span class="cta-sub">Chapter 02 · The basics</span>
+                </button>
+                <button class="cta cta-ghost" type="button" data-action="jump-overview">See what's inside</button>
               </div>
+
+              <ul class="hero-promises">
+                <li>
+                  <span class="promise-tag">01</span>
+                  <div>
+                    <strong>Plain language first.</strong>
+                    No vendor jargon. No hand-waving about what AI "can do someday."
+                  </div>
+                </li>
+                <li>
+                  <span class="promise-tag">02</span>
+                  <div>
+                    <strong>Tied to real work.</strong>
+                    Realtor intake, brokerage follow-up, and office research — not toy examples.
+                  </div>
+                </li>
+                <li>
+                  <span class="promise-tag">03</span>
+                  <div>
+                    <strong>Review stays human.</strong>
+                    Every scenario ends with a named person signing off before anything important moves.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <aside class="hero-stage" aria-hidden="false">
+              <div class="device-frame">
+                <div class="device-bar">
+                  <span class="device-dot device-dot-r"></span>
+                  <span class="device-dot device-dot-y"></span>
+                  <span class="device-dot device-dot-g"></span>
+                  <span class="device-title">Claude · Chat</span>
+                </div>
+                <div class="device-body">
+                  <div class="msg msg-you">
+                    <p class="msg-from">Tammy</p>
+                    <p class="msg-text">Draft a warm follow-up for Sarah after Tuesday's meeting. Under 120 words. End with the one decision I need from her.</p>
+                  </div>
+                  <div class="msg msg-claude">
+                    <p class="msg-from">Claude</p>
+                    <p class="msg-text"><strong>Hi Sarah,</strong> thanks for taking the time on Tuesday — I know we covered a lot. Here's where things stand…</p>
+                    <p class="msg-text msg-typing"><span class="caret"></span></p>
+                  </div>
+                </div>
+                <div class="device-foot">
+                  <span class="device-tag">Simple preview · this is not a live call</span>
+                </div>
+              </div>
+
+              <div class="hero-quote">
+                <p class="quote-mark" aria-hidden="true">"</p>
+                <p class="quote-text">Claude prepares the work. The realtor reviews. The human stays accountable.</p>
+                <p class="quote-attrib">— the working rule for this whole tour</p>
+              </div>
+            </aside>
+          </div>
+
+          <div class="overview" id="overview">
+            <div class="overview-head">
+              <p class="block-label">What's inside</p>
+              <h2 class="overview-title">Start anywhere. Each stop answers one practical question.</h2>
+            </div>
+            <ol class="overview-grid" id="overviewGrid">
+              <!-- injected by JS -->
+            </ol>
+          </div>
+        </section>
+
+        <!-- ============ CHAPTER 2 · THE BASICS ============ -->
+        <section class="chapter" data-chapter="basics" id="ch-basics" aria-labelledby="basics-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 02 · The basics</p>
+            <h1 class="ch-title" id="basics-title">Claude is a thinking partner, not a magic answer engine.</h1>
+            <p class="ch-lede">It is strongest when you give it a real brief and review its work before anything important moves. Everything else in this walkthrough is built on that one idea.</p>
+          </header>
+
+          <div class="principles">
+            <article class="principle">
+              <p class="principle-num">P · 01</p>
+              <h3 class="principle-title">Designed to be helpful and steerable.</h3>
+              <p>Claude comes from Anthropic. The practical point is that it is designed to act more like a careful coworker than a blank chatbot, and you can steer the tone, the rules, and the output shape.</p>
+            </article>
+            <article class="principle">
+              <p class="principle-num">P · 02</p>
+              <h3 class="principle-title">Best at knowledge work.</h3>
+              <p>Drafting. Summarizing. Comparing. Explaining. Organizing. The parts of the day that are text-heavy, document-heavy, follow-up-heavy. Not the parts that need handshakes and judgment.</p>
+            </article>
+            <article class="principle">
+              <p class="principle-num">P · 03</p>
+              <h3 class="principle-title">You still own the decision.</h3>
+              <p>Claude prepares the work. You review, you decide, you sign off. The review point is the value, not a bug to be automated away.</p>
+            </article>
+          </div>
+
+          <!-- Interactive: brief quality comparator -->
+          <div class="lab" id="briefLab">
+            <header class="lab-head">
+              <p class="lab-tag">Try it · simple example</p>
+              <h2 class="lab-title">The biggest lever is the brief.</h2>
+              <p class="lab-lede">Same task. Two briefs. Click between them and watch how the output changes.</p>
+            </header>
+
+            <div class="brief-switch" role="tablist" aria-label="Brief quality">
+              <button class="switch-pill is-active" type="button" data-brief="thin" role="tab" aria-selected="true">
+                <span class="pill-num">A</span>
+                <span class="pill-label">Thin brief</span>
+              </button>
+              <button class="switch-pill" type="button" data-brief="thick" role="tab" aria-selected="false">
+                <span class="pill-num">B</span>
+                <span class="pill-label">Better brief</span>
+              </button>
+            </div>
+
+            <div class="brief-pane">
+              <div class="brief-side brief-input">
+                <p class="side-label">You wrote</p>
+                <div class="brief-card" id="briefCard">
+                  <!-- injected by JS -->
+                </div>
+              </div>
+
+              <div class="brief-arrow" aria-hidden="true">
+                <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="2" y1="12" x2="42" y2="12"/>
+                  <polyline points="34 4 42 12 34 20"/>
+                </svg>
+              </div>
+
+              <div class="brief-side brief-output">
+                <p class="side-label">Claude replied</p>
+                <div class="brief-out" id="briefOut">
+                  <!-- injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <p class="lab-note" id="briefNote">Generic prompt, generic reply. Claude has nothing concrete to anchor the answer to.</p>
+          </div>
+
+          <div class="callout callout-soft">
+            <p class="callout-label">The rule that holds everywhere</p>
+            <p class="callout-body">In every Claude surface — chat, desktop, projects, even research — a better brief produces a better draft. The fastest improvement usually comes before Claude starts writing.</p>
+          </div>
+        </section>
+
+        <!-- ============ CHAPTER 3 · WHERE CLAUDE LIVES ============ -->
+        <section class="chapter" data-chapter="surfaces" id="ch-surfaces" aria-labelledby="surfaces-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 03 · Where Claude lives</p>
+            <h1 class="ch-title" id="surfaces-title">Same Claude. Different rooms.</h1>
+            <p class="ch-lede">Claude isn't one thing. It's the same intelligence showing up in a few different places depending on the job. Use this as a simple guide: how you work with Claude directly, what helps when work repeats, and what changes when Claude can connect to other tools.</p>
+          </header>
+
+          <div class="atlas">
+            <div class="atlas-grid">
+
+              <div class="atlas-row" data-layer="modes">
+                <div class="row-spine">
+                  <p class="row-num">L · 01</p>
+                  <p class="row-label">Ways to use it</p>
+                  <p class="row-sub">How directly are you working with Claude?</p>
+                </div>
+                <div class="row-tiles">
+                  <button class="tile" type="button" data-surface="chat">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8.5A3.5 3.5 0 0 1 8.5 5h15A3.5 3.5 0 0 1 27 8.5v8A3.5 3.5 0 0 1 23.5 20H14l-5 4v-4H8.5A3.5 3.5 0 0 1 5 16.5z"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Chat</p>
+                      <p class="tile-line">Fast back-and-forth.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="cowork">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="24" height="16" rx="2"/><line x1="4" y1="11" x2="28" y2="11"/><line x1="9" y1="26" x2="23" y2="26"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Cowork</p>
+                      <p class="tile-line">Longer multi-step work.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="code">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="10 10 4 16 10 22"/><polyline points="22 10 28 16 22 22"/><line x1="18" y1="6" x2="14" y2="26"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Code</p>
+                      <p class="tile-line">Mostly for technical teams.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="in-tool">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="10" height="10" rx="1.5"/><rect x="17" y="5" width="10" height="10" rx="1.5"/><rect x="5" y="17" width="10" height="10" rx="1.5"/><rect x="17" y="17" width="10" height="10" rx="1.5"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">In-tool</p>
+                      <p class="tile-line">Slack, Excel, Chrome.</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="atlas-row" data-layer="memory">
+                <div class="row-spine">
+                  <p class="row-num">L · 02</p>
+                  <p class="row-label">When work repeats</p>
+                  <p class="row-sub">What helps once the same job keeps coming back?</p>
+                </div>
+                <div class="row-tiles">
+                  <button class="tile" type="button" data-surface="projects">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Projects</p>
+                      <p class="tile-line">A home for recurring work.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="artifacts">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h11l5 5v19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><polyline points="20 4 20 9 25 9"/><line x1="12" y1="16" x2="22" y2="16"/><line x1="12" y1="21" x2="22" y2="21"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Artifacts</p>
+                      <p class="tile-line">Outputs you can actually share.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="skills">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 4 20 12 28 13 22 19 24 27 16 23 8 27 10 19 4 13 12 12 16 4"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Skills</p>
+                      <p class="tile-line">Repeatable playbooks for Claude.</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="atlas-row" data-layer="reach">
+                <div class="row-spine">
+                  <p class="row-num">L · 03</p>
+                  <p class="row-label">Connected help</p>
+                  <p class="row-sub">What changes when Claude can read from other tools?</p>
+                </div>
+                <div class="row-tiles">
+                  <button class="tile" type="button" data-surface="connectors">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="4"/><circle cx="23" cy="16" r="4"/><line x1="13" y1="16" x2="19" y2="16"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Connectors</p>
+                      <p class="tile-line">Reach into the tools you already use.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="search">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="8"/><line x1="20" y1="20" x2="27" y2="27"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Search</p>
+                      <p class="tile-line">Ask the whole organization.</p>
+                    </div>
+                  </button>
+                  <button class="tile" type="button" data-surface="research">
+                    <span class="tile-icon" aria-hidden="true">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h14l6 6v14a2 2 0 0 1-2 2H6z"/><line x1="11" y1="14" x2="21" y2="14"/><line x1="11" y1="18" x2="21" y2="18"/><line x1="11" y1="22" x2="17" y2="22"/></svg>
+                    </span>
+                    <div class="tile-text">
+                      <p class="tile-name">Research</p>
+                      <p class="tile-line">Multi-source briefings with citations.</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <aside class="atlas-detail" id="atlasDetail" aria-live="polite">
+              <!-- injected by JS -->
+            </aside>
+          </div>
+
+          <p class="atlas-footnote">Tap any tile to read more. The simplest way to think about Claude is this: how you talk to it, how it remembers repeat work, and how it can connect to other tools when needed.</p>
+        </section>
+
+        <!-- ============ CHAPTER 4 · IN TAMMY'S WORLD ============ -->
+        <section class="chapter" data-chapter="scenarios" id="ch-scenarios" aria-labelledby="scenarios-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 04 · In Tammy's world</p>
+            <h1 class="ch-title" id="scenarios-title">Three examples. Three ways Claude helps.</h1>
+            <p class="ch-lede">These examples are here to make the Claude surfaces concrete. Each one starts with a familiar Tammy-world situation, shows what Claude can prepare, and keeps the human review point visible.</p>
+          </header>
+
+          <nav class="case-tabs" role="tablist" aria-label="Tammy-world scenarios">
+            <button class="case-tab is-active" type="button" data-case="realtor" role="tab" aria-selected="true">
+              <span class="case-tab-num">Example 01</span>
+              <span class="case-tab-name">Realtor intake</span>
+            </button>
+            <button class="case-tab" type="button" data-case="brokerage" role="tab" aria-selected="false">
+              <span class="case-tab-num">Example 02</span>
+              <span class="case-tab-name">Brokerage follow-up</span>
+            </button>
+            <button class="case-tab" type="button" data-case="office" role="tab" aria-selected="false">
+              <span class="case-tab-num">Example 03</span>
+              <span class="case-tab-name">Office research</span>
+            </button>
+          </nav>
+
+          <article class="case-file" id="caseFile" aria-live="polite">
+            <!-- injected by JS -->
+          </article>
+        </section>
+
+        <!-- ============ CHAPTER 5 · FIT & LIMITS ============ -->
+        <section class="chapter" data-chapter="fit" id="ch-fit" aria-labelledby="fit-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 05 · Fit & limits</p>
+            <h1 class="ch-title" id="fit-title">Where Claude fits. Where it stops.</h1>
+            <p class="ch-lede">There's a simple split that handles 90% of "should I use AI here?" questions. It's not about smart vs. dumb work. It's about repetition and review.</p>
+          </header>
+
+          <div class="fit-split">
+            <article class="fit-side fit-strong">
+              <header class="fit-side-head">
+                <p class="fit-side-label">Strong fit</p>
+                <h2 class="fit-side-title">When the work is text-heavy and easy to review.</h2>
+              </header>
+              <ul class="fit-list">
+                <li><strong>Drafting</strong> · emails, summaries, status notes, recap reports.</li>
+                <li><strong>Extracting</strong> · pulling the key details out of long documents.</li>
+                <li><strong>Organizing</strong> · turning scattered notes into a clean next-step brief.</li>
+                <li><strong>Comparing</strong> · options, vendors, policies, workflows.</li>
+                <li><strong>Building reusable pieces</strong> · SOPs, simple dashboards, explainers.</li>
+              </ul>
+            </article>
+
+            <article class="fit-side fit-stop">
+              <header class="fit-side-head">
+                <p class="fit-side-label">Still needs you</p>
+                <h2 class="fit-side-title">When judgment, relationships, or compliance are at stake.</h2>
+              </header>
+              <ul class="fit-list">
+                <li><strong>Final approval</strong> on sensitive client communication.</li>
+                <li><strong>Verification</strong> of dates, numbers, contract details, regulated language.</li>
+                <li><strong>Sharing decisions</strong> — what gets surfaced, what doesn't.</li>
+                <li><strong>The stop button</strong> · deciding when automation should hand off to a person.</li>
+                <li><strong>Owning the relationship</strong> — judgment and accountability stay human.</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="anchor-statement">
+            <p class="anchor-label">The working rule, full size</p>
+            <p class="anchor-text">
+              <strong>Claude prepares.</strong>
+              The realtor, brokerage staff member, or office lead <strong>reviews.</strong>
+              The human <strong>stays accountable.</strong>
+            </p>
+          </div>
+        </section>
+
+        <!-- ============ CHAPTER 6 · COMMON QUESTIONS ============ -->
+        <section class="chapter" data-chapter="questions" id="ch-questions" aria-labelledby="questions-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 06 · Common questions</p>
+            <h1 class="ch-title" id="questions-title">The five questions that come up every time.</h1>
+            <p class="ch-lede">Click any question to open the short answer. The honest version, not the marketing version.</p>
+          </header>
+
+          <div class="faq" id="faqList">
+            <!-- injected by JS -->
+          </div>
+        </section>
+
+        <!-- ============ CHAPTER 7 · YOUR FIRST MOVE ============ -->
+        <section class="chapter" data-chapter="start" id="ch-start" aria-labelledby="start-title">
+          <header class="ch-head">
+            <p class="ch-eyebrow">Chapter 07 · Your first move</p>
+            <h1 class="ch-title" id="start-title">If this is worth trying, start small and visible.</h1>
+            <p class="ch-lede">Don't roll Claude out everywhere. Pick one repetitive workflow, give it a real brief, keep the review point visible, and judge by the time saved.</p>
+          </header>
+
+          <ol class="steps">
+            <li class="step">
+              <p class="step-num">01</p>
+              <h3 class="step-title">Pick one recurring workflow.</h3>
+              <p class="step-body">Choose the thing people already complain about: document setup, follow-up emails, reminders, summaries, inbox cleanup. Repetitive and reviewable beats clever and rare.</p>
             </li>
-            <li>
-              <span class="workflow-sequence-number">02</span>
-              <div>
-                <h3>The folder and record are prepared</h3>
-                <p>Claude pulls the details from the agreement and sets up the place the file will live.</p>
-              </div>
+            <li class="step">
+              <p class="step-num">02</p>
+              <h3 class="step-title">Give Claude a real brief.</h3>
+              <p class="step-body">Tell it who this is for, what the outcome should be, what tone fits, and what a good answer looks like. The template below is a starting point.</p>
             </li>
-            <li>
-              <span class="workflow-sequence-number">03</span>
-              <div>
-                <h3>Dates and follow-up are staged</h3>
-                <p>Deadlines become reminders. The first follow-up email is drafted and waiting.</p>
-              </div>
+            <li class="step">
+              <p class="step-num">03</p>
+              <h3 class="step-title">Keep the review point visible.</h3>
+              <p class="step-body">Mark — out loud, in the workflow — where a person checks the output before anything important is sent, signed, or approved.</p>
             </li>
-            <li>
-              <span class="workflow-sequence-number">04</span>
-              <div>
-                <h3>The realtor reviews before anything moves</h3>
-                <p>Nothing goes out until the realtor checks the checklist and confirms the file.</p>
-              </div>
+            <li class="step">
+              <p class="step-num">04</p>
+              <h3 class="step-title">Expand only after the first win is clear.</h3>
+              <p class="step-body">When the same workflow keeps coming back and the time saved is obvious, that's the signal to add a project, a saved skill, or a connected tool.</p>
             </li>
           </ol>
-        </section>
 
-        <section class="content-section reveal" id="proof" data-section="proof" aria-labelledby="proof-title">
-          <header class="section-header">
-            <p class="section-index">II</p>
-            <div>
-              <h2 id="proof-title">Proof</h2>
-              <p class="section-intro">This is the part to show on screen.</p>
-            </div>
-          </header>
-          <aside class="speaker-note">If the room only looks at one section, make it this one.</aside>
+          <div class="prompt-template">
+            <header class="prompt-head">
+              <p class="prompt-tag">Take this with you</p>
+              <h2 class="prompt-title">A starter brief you can paste into Claude today.</h2>
+              <p class="prompt-lede">Edit the bracketed parts. The structure does most of the work.</p>
+            </header>
 
-          <div class="proof-layout">
-            <article class="proof-stage">
-              <div class="proof-stage-frame" id="proofStageFrame" tabindex="0" role="button" aria-label="Open larger proof image">
-                <img id="proofStageImage" src="./images/workflow-file.png" alt="Google Drive transaction folder created from the realtor workflow.">
-                <div class="proof-zoom">Enlarge</div>
+            <div class="prompt-card">
+              <div class="prompt-toolbar">
+                <span class="prompt-file">starter-brief.txt</span>
+                <button class="copy-btn" type="button" id="copyBtn" aria-live="polite">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="12" height="12" rx="2"/>
+                    <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+                  </svg>
+                  <span class="copy-label">Copy</span>
+                </button>
               </div>
-              <div class="proof-stage-copy">
-                <p class="proof-stage-kicker" id="proofStageKicker">Proof</p>
-                <h3 id="proofStageTitle">The folder setup matches the corrected realtor flow.</h3>
-                <p id="proofStageDescription">The system is already preparing the right place for the file to live.</p>
-                <div class="proof-quote presenter-only" id="proofStageQuote">What Tammy can say: "The system is not just reading the document. It is already preparing the right place for the file to live."</div>
-              </div>
-            </article>
+              <pre class="prompt-body" id="promptBody">You are helping me with [the recurring task: e.g. drafting a client follow-up].
 
-            <div class="proof-list" role="tablist" aria-label="Workflow proof deck">
-              <button class="proof-trigger active" type="button" data-proof="file" role="tab" aria-selected="true">
-                <span class="proof-step">01</span>
-                <strong>File</strong>
-              </button>
-              <button class="proof-trigger" type="button" data-proof="record" role="tab" aria-selected="false">
-                <span class="proof-step">02</span>
-                <strong>Record</strong>
-              </button>
-              <button class="proof-trigger" type="button" data-proof="remind" role="tab" aria-selected="false">
-                <span class="proof-step">03</span>
-                <strong>Remind</strong>
-              </button>
-              <button class="proof-trigger" type="button" data-proof="reply" role="tab" aria-selected="false">
-                <span class="proof-step">04</span>
-                <strong>Reply</strong>
-              </button>
+Context:
+- The audience is [who reads this, and what they care about].
+- This is for [the situation — meeting, transaction, file, decision].
+- My constraints are [length, tone, format, deadline].
+- Source material is below — use it as the source of truth.
+
+Task:
+- Produce a first draft that I can review and edit.
+- Highlight anything you weren't sure about so I can check it.
+- End with [the one thing I'll decide before sending].
+
+Source material:
+[paste notes, document, or thread here]</pre>
             </div>
+
+            <p class="prompt-foot">After you paste this, watch what happens when you tighten the bracketed parts. That's the lever, every time.</p>
           </div>
-          <div class="proof-actions">
-            <a class="inline-link" href="https://mcc-realtor-app.vercel.app/">Open the live workflow demo</a>
+
+          <div class="closing">
+            <p class="closing-label">Bottom line</p>
+            <h2 class="closing-title">The right question isn't "what can AI do?"</h2>
+            <p class="closing-body">It's <em>which part of the work repeats every week, and how do we keep review in place?</em> If you have an honest answer to that, you already know where Claude fits — and where it doesn't.</p>
           </div>
         </section>
 
-        <section class="content-section reveal" id="frame" data-section="frame" aria-labelledby="frame-title">
-          <header class="section-header">
-            <p class="section-index section-index-soft">III</p>
-            <div>
-              <h2 id="frame-title">Frame</h2>
-              <p class="section-intro">The usual questions are about control, fit, and what still stays human.</p>
-            </div>
-          </header>
-          <aside class="speaker-note">Answer the trust question once, then move on.</aside>
-
-          <div class="review-layout">
-            <ol class="review-checklist">
-              <li>Signed agreement</li>
-              <li>Purchase contract / amendments</li>
-              <li>Deposit proof</li>
-              <li>Condition waiver / fulfillment</li>
-              <li>MLS listing</li>
-              <li>Trade record review</li>
-            </ol>
-
-            <article class="review-summary">
-              <p class="review-summary-label">Human check</p>
-              <h3>The system lines things up. The realtor signs off.</h3>
-              <p>You are reviewing prepared work instead of rebuilding it from scratch.</p>
-            </article>
-          </div>
-
-          <div class="fit-band">
-            <article>
-              <p class="fit-label">Removes</p>
-              <h3>Retyping and scattered follow-up</h3>
-              <p>The agreement becomes the starting point for the file, not another thing someone has to manually translate.</p>
-            </article>
-            <article>
-              <p class="fit-label">Keeps</p>
-              <h3>Judgment and client care</h3>
-              <p>The realtor still checks the deal, manages the relationship, and decides what gets used.</p>
-            </article>
-          </div>
-
-          <p class="fit-line">This is admin support around relationship work.</p>
-
-          <div class="faq-layout">
-            <div class="faq-list" role="tablist" aria-label="Objection handling">
-              <button class="faq-trigger active" type="button" data-faq="privacy" role="tab" aria-selected="true">Privacy</button>
-              <button class="faq-trigger" type="button" data-faq="accuracy" role="tab" aria-selected="false">Accuracy</button>
-              <button class="faq-trigger" type="button" data-faq="manual" role="tab" aria-selected="false">Manual</button>
-              <button class="faq-trigger" type="button" data-faq="replacement" role="tab" aria-selected="false">Replacement</button>
-              <button class="faq-trigger" type="button" data-faq="developer" role="tab" aria-selected="false">Developer?</button>
-            </div>
-
-            <article class="faq-panel">
-              <p class="faq-kicker" id="faqKicker">Short answer</p>
-              <h3 id="faqTitle">Access should be intentional, not unlimited.</h3>
-              <p id="faqBody">You choose what gets shared, keep permissions tight, and keep review points in place for anything sensitive.</p>
-              <div class="faq-quote presenter-only" id="faqQuote">What Tammy can say: "This is not about opening every file to AI by default. It is about using it in a controlled way for clearly defined tasks."</div>
-            </article>
-          </div>
-        </section>
-
-        <section class="content-section reveal" id="close" data-section="close" aria-labelledby="close-title">
-          <div class="closing-panel">
-            <p class="closing-kicker">Close</p>
-            <h2 id="close-title">Less retyping, fewer missed steps, faster follow-up, more time for judgment and client care.</h2>
-            <p>The practical point is simple: the workflow moves faster, and the realtor still checks the file before anything goes out.</p>
-            <a class="inline-link inline-link-strong" href="https://mcc-realtor-app.vercel.app/">Open the live workflow demo</a>
-          </div>
-        </section>
       </main>
     </div>
-  </div>
 
-  <div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged proof image" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" type="button">Close</button>
-    <img id="lightboxImage" src="" alt="">
+    <!-- ================== BOTTOM CONTROLS ================== -->
+    <footer class="footbar" role="contentinfo">
+      <button class="ctrl ctrl-prev" type="button" id="prevBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 6 9 12 15 18"/>
+        </svg>
+        <span class="ctrl-text">
+          <span class="ctrl-label">Previous</span>
+          <span class="ctrl-target" id="prevTarget">—</span>
+        </span>
+      </button>
+
+      <div class="footbar-center">
+        <p class="footbar-current">
+          <span id="currentNum">01</span>
+          <span class="footbar-sep">·</span>
+          <span id="currentName">Welcome</span>
+        </p>
+        <p class="footbar-progress" id="progressLabel">1 of 7</p>
+      </div>
+
+      <button class="ctrl ctrl-next" type="button" id="nextBtn">
+        <span class="ctrl-text ctrl-text-right">
+          <span class="ctrl-label">Next</span>
+          <span class="ctrl-target" id="nextTarget">The basics</span>
+        </span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 6 15 12 9 18"/>
+        </svg>
+      </button>
+    </footer>
+
   </div>
 
   <script src="./app.js"></script>

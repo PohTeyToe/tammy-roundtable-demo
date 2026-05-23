@@ -1,5 +1,9 @@
 # Realtor Workflow Live + E2E Implementation Plan
 
+> Historical implementation plan for May 21, 2026. Keep this file for repo
+> provenance only. Current deploy/auth state and outbound draft work belong in
+> `docs/VERIFICATION.md`, `docs/HANDOFF.md`, and `C:\VFC\.ops`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship Tammy's `tammy-roundtable-demo.vercel.app` with all four May 20 evening revisions applied (Step 1 = DocuSign upload, realtor folder taxonomy, realtor validation checklist at bottom of trade record, no FINTRAC/lawyers/possession), wired to the existing Apps Script Web App so a Realtor can drop a real signed agreement and get back a real Drive folder + trade record + Gmail draft.
@@ -525,76 +529,19 @@ Confirm in this order:
 
 ---
 
-## Task 13: Write manual auth + redeploy handoff doc
+## Task 13: Manual auth handoff boundary note
 
-**Files:** Create `docs/MANUAL-AUTH-2026-05-21.md`
+The historical plan used to embed a day-of manual auth and redeploy handoff
+document with account-specific instructions.
 
-- [ ] **Step 1: Write the doc**
+That operator runbook content was intentionally removed from this shareable repo
+plan during boundary cleanup.
 
-```markdown
-# Manual Auth + Redeploy Steps (May 21, 2026)
+If current manual auth or redeploy steps are needed:
 
-These steps require browser access and OAuth approval, which can't be automated from the terminal. Estimated time: 15 minutes.
-
-## 1. Open the Apps Script editor
-
-https://script.google.com/d/1tMt6waE8UKTMmxcv2BCwQk7aHHS1bkCMNoAwSircsT2fOmt3VzPG15fK/edit
-
-Sign in as `abdalsf5@gmail.com` if not already.
-
-## 2. Set the Claude API key
-
-- Project Settings (gear icon) -> Script Properties -> Add script property
-- Name: `TRD_CLAUDE_API_KEY`
-- Value: contents of `$env:ANTHROPIC_API_KEY` (Anthropic API key, starts with `sk-ant-api...`)
-- Save
-
-## 3. Authorize OAuth scopes
-
-- In the editor, select function `setupDemoEnvironment` from the function dropdown
-- Click Run
-- A consent dialog appears. Click `Review permissions`, pick the account, click `Allow`
-- Wait for execution to complete. Logs panel should show `Idempotent setup completed`
-
-## 4. Seed demo data
-
-- Select function `seedDemoData` -> Run
-- Logs panel should show two `Seed` entries (one for RT-COMP-1001, one for RT-LIVE-1002)
-
-## 5. Redeploy Web App with Anyone access
-
-- Deploy (top right) -> Manage deployments
-- Find the HEAD deployment (the one without a version number)
-- Click the pencil icon to edit
-- Configuration: `Web app`
-- Execute as: `Me (abdalsf5@gmail.com)`
-- Who has access: `Anyone`
-- Click Deploy
-- URL should stay the same: `/macros/s/AKfycbwH2fE6VR-btqpeCrHJvseg5QDhlqi7xmiC56hPaCKl/exec`
-
-## 6. Confirm
-
-In a private/incognito window (so you're not auto-signed in), open:
-`https://script.google.com/macros/s/AKfycbwH2fE6VR-btqpeCrHJvseg5QDhlqi7xmiC56hPaCKl/exec`
-
-Expected: the "Signed agreement upload" page renders. No sign-in prompt.
-
-## 7. Tell the agent you're done
-
-Reply in the session: `manual auth complete`. The agent will then run the e2e test pass.
-```
-
-- [ ] **Step 2: Commit**
-
-```powershell
-git add docs/MANUAL-AUTH-2026-05-21.md
-git commit -m "docs: handoff steps for manual Apps Script auth + Web App redeploy"
-git push origin main
-```
-
-- [ ] **Step 3: Halt and wait for user**
-
-Stop executing tasks. Print to user: `Tasks 1-13 complete. Open docs/MANUAL-AUTH-2026-05-21.md and walk through the 7 steps. Reply 'manual auth complete' when done so I can run the e2e test pass.`
+- use [docs/DEPLOY.md](C:/VFC/tammy-roundtable-demo/docs/DEPLOY.md:1) for repo-owned procedure
+- use [mcc-realtor-app deploy ops](C:/VFC/.ops/context/systems/mcc-realtor-app-deploy-ops.md:1) for live environment state
+- keep account-specific notes and handoff checkpoints in `C:\VFC\.ops`
 
 ---
 
@@ -660,43 +607,16 @@ git push origin main
 
 ---
 
-## Task 15: Tammy handoff message draft
+## Task 15: Tammy handoff draft boundary note
 
-**Files:** none (draft only, do not send)
+Outbound Tammy reply text, thread IDs, and Gmail draft commands were
+intentionally removed from this shareable repo plan during boundary cleanup.
 
-- [ ] **Step 1: Draft a short Gmail reply to the `Technical stack` thread**
+If a fresh draft is needed:
 
-Body (reply, in-thread):
-
-```
-Hi Tammy,
-
-Both revisions are in on https://tammy-roundtable-demo.vercel.app/:
-
-- Step 2 / Drive folder: loose docs at root plus one folder (RMS & Photos by default; Condo Docs if the agreement is condo). FINTRAC, Possession & Keys, and Lawyer Correspondence are gone.
-- Step 4 / Trade record + checklist: rebuilt from the templates you shared. 6-item validation checklist at the bottom (signed agreement, purchase contract, deposit, condition waiver, MLS listing, trade record review). FINTRAC, lawyers, and possession dropped.
-
-Step 1 now has a "Try the live upload" button that opens the live upload page. Drop one of the signed DocuSign agreements there and you get back a real Drive folder, a real trade record row + checklist, and a Gmail draft. I tested it end-to-end with the Exclusive Buyer Agreement from your shared folder.
-
-If you want Vercel access to tweak copy yourself, send me the email you want me to invite and I'll add you as a collaborator.
-
-Thanks,
-Abdallah
-```
-
-- [ ] **Step 2: Save as Gmail draft (do NOT send)**
-
-```powershell
-gws gmail +reply --thread-id 19e3e8b32adefd7b --body @'
-[paste body above]
-'@ --dry-run
-```
-
-Then save as draft (without `--dry-run`, but use the draft helper, not send). If the gws CLI doesn't support draft-only mode, leave the draft creation for the user to do manually in Gmail and just print the body to the chat for them to copy.
-
-- [ ] **Step 3: Print the body to the chat and stop**
-
-Tell user: `Draft is ready. Review in Gmail Drafts. Do not send without final read.`
+- reconstruct it from [C:\VFC\.ops\context\communication\tammy-thread-state.md](C:/VFC/.ops/context/communication/tammy-thread-state.md:1)
+- keep draft-only artifacts in [C:\VFC\.ops\tmp\handoffs](C:/VFC/.ops/tmp/handoffs:1)
+- do not treat this historical repo plan as the active communication surface
 
 ---
 

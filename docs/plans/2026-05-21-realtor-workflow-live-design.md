@@ -1,5 +1,10 @@
 # Realtor Workflow Live + E2E Design
 
+> Historical design note for the May 21, 2026 roundtable lane. Keep this file
+> for implementation reasoning only. Current deploy/auth state, collaborator
+> access, and outbound communication belong in the current repo routers and
+> `C:\VFC\.ops`.
+
 Date: 2026-05-21
 Author: Abdallah (via Claude session)
 Status: Approved for implementation
@@ -130,16 +135,16 @@ To:
 - `clasp push --force`
 - Redeploy HEAD with `Execute as: Me`, `Who has access: Anyone` (manual via Apps Script editor, since clasp CLI cannot set Web App access scope reliably).
 
-## What the user (Abdallah) needs to do manually
+## Historical operator note
 
-These steps require browser auth and cannot be automated from the terminal:
+The day-of manual auth and deploy steps were intentionally removed from this
+shareable design note during boundary cleanup.
 
-1. Open `https://script.google.com/d/1tMt6waE8UKTMmxcv2BCwQk7aHHS1bkCMNoAwSircsT2fOmt3VzPG15fK/edit` in browser, signed in as `abdalsf5@gmail.com`.
-2. Project Settings -> Script Properties -> add `TRD_CLAUDE_API_KEY` = the Anthropic API key from `$ANTHROPIC_API_KEY` env.
-3. From the editor, select function `setupDemoEnvironment` -> Run -> approve all OAuth scopes (Sheets, Drive, Forms, Calendar, Gmail compose, external_request).
-4. Select function `seedDemoData` -> Run -> confirms the demo workbook is populated.
-5. Deploy -> Manage deployments -> edit the HEAD deployment -> set `Execute as: Me`, `Who has access: Anyone` -> save. URL stays the same.
-6. (Optional but Tammy explicitly asked) Add Tammy as a Vercel project collaborator via vercel.com so she can tweak copy if she wants.
+Use the current repo-owned deploy instructions plus the private `.ops` deploy
+state if you need to run the artifact today:
+
+- [docs/DEPLOY.md](C:/VFC/tammy-roundtable-demo/docs/DEPLOY.md:1)
+- [mcc-realtor-app deploy ops](C:/VFC/.ops/context/systems/mcc-realtor-app-deploy-ops.md:1)
 
 ## Testing / verification
 
@@ -170,7 +175,7 @@ To avoid drift before the roundtable:
 
 ## Risks
 
-- Browser auth step depends on Abdallah being able to sign in to the script editor and approve scopes. If the account that owns the script project is not `abdalsf5@gmail.com`, the deploy step will fail and we need to either get the right account or re-create the project under the right account.
+- Browser auth step depends on the operator being able to sign in to the script editor and approve scopes. If the correct Google account does not own the script project, the deploy step will fail and the project may need to be re-created or re-homed.
 - `clasp push --force` may overwrite manual edits if any were made in the editor. The repo source is authoritative; verify nothing was hand-edited in the editor before pushing.
 - The Anthropic API key needs to be set as a Script Property. If the wrong key shape is used (e.g. an OAuth token instead of `sk-ant-api...`), extraction will fail at the Claude call. The current `trdSetClaudeApiKey` already special-cases the OAuth shape.
 - Real-template extraction may produce missing-field outcomes if Tammy's templates don't contain all the fields in `extractionMinimumFieldKeys`. May need to relax the minimum field set or tolerate a partial fill for the demo.

@@ -2,6 +2,9 @@
 
 ## Hosted preview site
 
+Current deploy IDs, mailbox ownership, and collaborator-invite state belong in
+private `.ops` notes, not in this durable repo doc.
+
 Use this when the goal is a Tammy-facing review URL rather than a live Apps Script run:
 
 ```powershell
@@ -31,7 +34,7 @@ clasp run runGenerateTransactionPackageByTransactionId --params '["RT-LIVE-1002"
 
 ## Re-home into a separate test Google account
 
-Use this if you need the artifact moved off the currently authenticated mailbox.
+Use this if you need the artifact moved off the currently authenticated Google account.
 
 1. Sign out of the current `clasp` session or open a browser session that is already authenticated to the dedicated test Google account.
 2. In `C:\VFC\tammy-roundtable-demo`, run:
